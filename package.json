@@ -1,0 +1,11 @@
+{
+  "name": "sneakers-store",
+  "version": "1.0.0",
+  "author": "Den Lahodnyi",
+  "license": "ISC",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "api:dev": "pnpm run -F backend start:debug"
+  }
+}

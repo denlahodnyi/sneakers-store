@@ -1,0 +1,1 @@
+export const DRIZZLE_OPTS = 'DRIZZLE_OPTIONS';
