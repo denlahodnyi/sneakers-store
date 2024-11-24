@@ -1,7 +1,7 @@
 import { contract } from '@sneakers-store/contracts';
 import { initClient, type InitClientArgs } from '@ts-rest/core';
 
-import { env } from '../libs/env';
+import { env } from '../config/env';
 
 export function getClient(initClientArgs?: InitClientArgs) {
   const baseUrl = env.API_URL;

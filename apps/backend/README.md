@@ -2,9 +2,22 @@
 
 ## Getting Started
 
-Copy environment variables from `.env.example` to `.env`
+Copy environment variables from `.env.example` to `.env`. Adjust
+database variables if needed.
 
-Compile and run the project
+`AUTH_SECRET` is a random value used by the Auth.js to encrypt tokens and email
+verification hashes. It must be the same as for frontend and backend.
+
+Apply migrations:
+
+```bash
+# development
+$ pnpm db:migrate:dev
+```
+
+Build API contract in `/lib/contracts`
+
+Compile and run the project:
 
 ```bash
 # development

@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    // "module": "CommonJS",
+    // "allowImportingTsExtensions": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    // "noEmitOnError": false,
+    // "noCheck": false,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,

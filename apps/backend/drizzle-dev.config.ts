@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-// import 'dotenv/config';
 import * as dotenv from '@dotenvx/dotenvx';
 import { defineConfig } from 'drizzle-kit';
 
@@ -9,7 +8,7 @@ dotenv.config({
 
 export default defineConfig({
   out: './drizzle',
-  schema: './src/db/schema.ts',
+  schema: './src/db/schemas/*',
   dialect: 'postgresql',
   dbCredentials: {
     // url: process.env.DATABASE_URL!,
@@ -20,4 +19,5 @@ export default defineConfig({
     database: process.env.DB_NAME!,
     ssl: false,
   },
+  // casing: 'snake_case', // doesn't work
 });
