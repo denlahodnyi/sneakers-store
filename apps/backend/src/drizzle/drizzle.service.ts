@@ -1,8 +1,8 @@
 import { Inject, Injectable, type OnModuleInit } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
-import { DRIZZLE_OPTS } from './drizzle.constants';
-import type { DrizzleModuleOptions } from './drizzle.validation';
+import { DRIZZLE_OPTS } from './drizzle.constants.js';
+import type { DrizzleModuleOptions } from './drizzle.validation.js';
 
 @Injectable()
 export class DrizzleService implements OnModuleInit {

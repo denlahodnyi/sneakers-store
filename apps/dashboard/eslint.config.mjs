@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
-import * as tsParser from '@typescript-eslint/parser';
+// import * as tsParser from '@typescript-eslint/parser';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import eslintPluginImportX from 'eslint-plugin-import-x';
@@ -22,11 +22,11 @@ export default tseslint.config(
   {
     settings: {
       next: {
-        rootDir: 'apps/dashboard/',
+        rootDir: process.cwd(),
       },
     },
   },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends('next/core-web-vitals' /* 'next/typescript' */),
   ...tseslint.configs.strict,
   ...tseslint.configs.stylistic,
   {
@@ -38,7 +38,8 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx,mtsx}'],
     languageOptions: {
-      parser: tsParser,
+      // parser: tsParser,
+      parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
@@ -88,7 +89,8 @@ export default tseslint.config(
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     ignores: ['eslint.config.mjs'],
     languageOptions: {
-      parser: tsParser,
+      // parser: tsParser,
+      parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
@@ -128,6 +130,10 @@ export default tseslint.config(
         // ...allow between (prevents conflict with import-x)
         { blankLine: 'any', prev: 'import', next: 'import' },
       ],
+      '@stylistic/brace-style': ['error', '1tbs'],
+      '@stylistic/indent': ['off'],
+      '@stylistic/operator-linebreak': ['off'], // conflicts with Prettier
+      '@stylistic/arrow-parens': ['off'], // conflicts with Prettier
     },
   },
   eslintPluginPrettierRecommended,

@@ -1,0 +1,21 @@
+{
+  "name": "@sneakers-store/next-auth",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "types": "./dist/nextAuthConfig.d.ts",
+    "import": "./dist/nextAuthConfig.js",
+    "require": "./dist/nextAuthConfig.cjs"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@sneakers-store/contracts": "workspace:*",
+    "@ts-rest/core": "^3.51.0",
+    "next-auth": "5.0.0-beta.25"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}
