@@ -77,6 +77,18 @@ const getTheme = (options: { rootElement?: Element | null }) =>
           },
         },
       },
+      MuiInputBase: {
+        styleOverrides: {
+          input: {
+            // double ampersand to increase specificity and override default
+            '&&:-webkit-autofill': {
+              WebkitBoxShadow: '0 0 0 100px #EAF1FF inset',
+              WebkitTextFillColor: '#000',
+              caretColor: 'initial',
+            },
+          },
+        },
+      },
     },
   });
 

@@ -11,17 +11,20 @@ import { Reflector } from '@nestjs/core';
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { getSession } from '../shared/libs/next-auth/getSession.js';
 import { IS_PUBLIC_KEY } from './public.decorator.js';
-import type { UserEntity } from '../db/schemas/user.schema.js';
+import type { Role, UserEntity } from '../db/schemas/user.schema.js';
 import {
   IS_AUTH_CONDITION_KEY,
   type ConditionsHandler,
 } from './auth-conditions.decorator.js';
+import { ROLES_DECORATOR_KEY } from './roles.decorator.js';
 
 declare module 'express' {
   interface Request {
     user?: UserEntity;
   }
 }
+
+type RequestWithDefinedUser = Omit<Request, 'user'> & { user: UserEntity };
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -41,17 +44,31 @@ export class AuthGuard implements CanActivate {
     const handler = this.reflector.getAllAndOverride<
       ConditionsHandler | undefined
     >(IS_AUTH_CONDITION_KEY, [ctx.getClass(), ctx.getHandler()]);
+    const requiredRoles = this.reflector.getAllAndOverride<Role | undefined>(
+      ROLES_DECORATOR_KEY,
+      [ctx.getClass(), ctx.getHandler()],
+    );
 
     const request = ctx.switchToHttp().getRequest<Request>();
     const session = await getSession(request, this.drizzleService.db);
+
     if (session?.user) {
       request.user = session.user as UserEntity;
       if (handler) {
-        const allow = checkConditions(handler(request.user), request);
+        const allow = checkConditions(
+          handler(request.user),
+          request as RequestWithDefinedUser,
+        );
         if (!allow) {
           throw new ForbiddenException('You cannot access that resource');
         }
         return true;
+      }
+      if (
+        requiredRoles &&
+        (!request.user.role || !requiredRoles.includes(request.user.role))
+      ) {
+        throw new ForbiddenException('You cannot access that resource');
       }
       return true;
     } else {
@@ -64,14 +81,14 @@ export class AuthGuard implements CanActivate {
 // combined using AND. Objects are combined using OR.
 const checkConditions = (
   conditions: ReturnType<ConditionsHandler>,
-  req: Request,
+  req: RequestWithDefinedUser,
 ) => {
   type Condition = (typeof conditions)[number];
   const results = conditions.map((obj) => {
     return Object.entries(obj).every(
       ([key, fields]: [keyof Condition, Condition[keyof Condition]]) => {
         if (key === 'roles' && fields) {
-          return fields.includes((req.user as UserEntity).role);
+          return fields.includes(req.user.role);
         }
         if (key === 'params' && fields) {
           return Object.entries(

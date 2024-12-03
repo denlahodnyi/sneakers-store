@@ -20,12 +20,7 @@ type SignInServerFn = (
 ) => Promise<{ message: string } | undefined>;
 
 function LoginForm(props: { signInServerFn: SignInServerFn }) {
-  const [state, formAction] = useActionState<InitState, FormData>(
-    props.signInServerFn,
-    {
-      message: '',
-    },
-  );
+  const [state, formAction] = useActionState(props.signInServerFn, undefined);
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {

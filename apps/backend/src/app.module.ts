@@ -7,6 +7,9 @@ import { DrizzleModule } from './drizzle/drizzle.module.js';
 import { UsersModule } from './users/users.module.js';
 import { HttpExceptionFilter } from './shared/filters/http-exception.filter.js';
 // import { SuccessResponseInterceptor } from './shared/interceptors/success-response.interceptor.js';
+import { CategoriesModule } from './categories/categories.module.js';
+import { BrandsModule } from './brands/brands.module.js';
+import { ColorsModule } from './colors/colors.module.js';
 
 const prodEnvs = ['.env.production.local', '.env.production', '.env'];
 const devEnvs = ['.env.development.local', '.env.development', '.env'];
@@ -33,6 +36,9 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
       /* eslint-enable @typescript-eslint/no-non-null-assertion */
     }),
     UsersModule,
+    CategoriesModule,
+    BrandsModule,
+    ColorsModule,
   ],
   exports: [],
   controllers: [AppController],

@@ -32,6 +32,26 @@ $ pnpm run start:prod
 
 Api is served at [http://localhost:3000](http://localhost:3000)
 
+## Data seeding
+
+Sync with database
+
+```bash
+# development
+$ pnpm seed:sync:dev
+# production
+$ pnpm seed:sync:prod
+```
+
+Seed data
+
+```bash
+# development
+$ pnpm seed
+# production
+$ pnpm seed:prod
+```
+
 ## Run tests
 
 ```bash

@@ -134,6 +134,7 @@ export default tseslint.config(
       '@stylistic/indent': ['off'],
       '@stylistic/operator-linebreak': ['off'], // conflicts with Prettier
       '@stylistic/arrow-parens': ['off'], // conflicts with Prettier
+      '@stylistic/multiline-ternary': ['off'], // conflicts with Prettier
     },
   },
   eslintPluginPrettierRecommended,
