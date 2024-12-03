@@ -74,7 +74,11 @@ export const getNextAuthConfig = (
           }
         }
         if (signInResult.body.status === 'error') {
-          throw new Error(signInResult.body.message || 'Cannot sign-in');
+          const exception = new Error(
+            signInResult.body.message || 'Cannot sign-in'
+          );
+          exception.cause = signInResult.body;
+          throw exception;
         }
         throw new Error('Invalid credentials');
       },

@@ -29,3 +29,16 @@ Run the development servers for frontend:
 ```bash
 pnpm dev
 ```
+
+## TODO
+
+- [] products and filters
+- [] featured products
+- [] search by products
+- [] cart
+- [] payment and orders
+- [] favorites
+- [] rating and comments
+- [] simple analytics in dashboard
+- [] improve build process
+- [] deploy

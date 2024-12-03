@@ -14,6 +14,9 @@ import type {
   AccountCreateDto,
   AccountResponseDto,
 } from './dto/account.dto.js';
+import { categoryContract } from './src/category.contract.js';
+import { brandContract } from './src/brand.contract.js';
+import { colorContract } from './src/color.contract.js';
 
 const c = initContract();
 
@@ -188,6 +191,9 @@ export const contract = c.router(
         >(),
       },
     },
+    categories: categoryContract,
+    brands: brandContract,
+    colors: colorContract,
   },
   { strictStatusCodes: true }
 );
@@ -198,3 +204,6 @@ export type * as TsRestCore from '@ts-rest/core';
 export * from './dto/user.dto.js';
 export * from './dto/account.dto.js';
 export * from './dto/session.dto.js';
+export * from './dto/category.dto.js';
+export * from './dto/brand.dto.js';
+export * from './dto/color.dto.js';

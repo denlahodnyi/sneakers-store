@@ -35,6 +35,7 @@ const SALT_ROUNDS = 10;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { password, ...omitPassword } = getTableColumns(usersTable);
+const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 
 @Controller('users')
 export class UsersController {
@@ -74,11 +75,8 @@ export class UsersController {
           'The user with the provided email is not found',
         );
       }
-      if (
-        signInDto.asAdmin &&
-        ![(Role.SUPER_ADMIN, Role.ADMIN)].includes(user.role as string)
-      ) {
-        throw new ForbiddenException('Sorry, yoy have no access rights');
+      if (signInDto.asAdmin && !adminRoles.includes(user.role as string)) {
+        throw new ForbiddenException('Sorry, you have no access rights');
       }
       if (!user.password) {
         throw new BadRequestException(
@@ -103,7 +101,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: [Role.SUPER_ADMIN, Role.ADMIN] },
+    { roles: adminRoles },
   ])
   @TsRestHandler(c.getUser)
   async getUser(@Param('userId', ParseUUIDPipe) userId: string) {
@@ -120,7 +118,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: [Role.SUPER_ADMIN, Role.ADMIN] },
+    { roles: adminRoles },
   ])
   @TsRestHandler(c.updateUser)
   async updateUser(
@@ -179,7 +177,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: [Role.SUPER_ADMIN, Role.ADMIN] },
+    { roles: adminRoles },
   ])
   @TsRestHandler(c.deleteUser)
   async deleteUser(@Param('userId', new ParseUUIDPipe()) userId: string) {

@@ -9,6 +9,8 @@ export const Role = {
   ADMIN: 'admin',
 } as const;
 
+export type Role = (typeof Role)[keyof typeof Role];
+
 export const rolesEnum = t.pgEnum('role', [Role.SUPER_ADMIN, Role.ADMIN]);
 
 export const usersTable = t.pgTable('users', {

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "White",
+    "hex": "#FFF",
+    "is_active": true
+  },
+  {
+    "name": "Black",
+    "hex": "#000",
+    "is_active": true
+  }
+]
