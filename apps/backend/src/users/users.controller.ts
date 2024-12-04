@@ -42,12 +42,12 @@ export class UsersController {
   constructor(private drizzleService: DrizzleService) {}
 
   @Post()
-  @TsRestHandler(c.createUser)
+  @TsRestHandler(c.users.createUser)
   async createUser(
     @Body(ConfiguredValidationPipe)
     createUserDto: UserCreateDto,
   ) {
-    return tsRestHandler(c.createUser, async () => {
+    return tsRestHandler(c.users.createUser, async () => {
       let hashedPassword = null;
       if (createUserDto.password) {
         hashedPassword = await bcrypt.hash(createUserDto.password, SALT_ROUNDS);
@@ -62,9 +62,9 @@ export class UsersController {
 
   @HttpCode(200)
   @Post('signin')
-  @TsRestHandler(c.signIn)
+  @TsRestHandler(c.users.signIn)
   async signIn(@Body(ConfiguredValidationPipe) signInDto: UserSignInDto) {
-    return tsRestHandler(c.signIn, async () => {
+    return tsRestHandler(c.users.signIn, async () => {
       const [user = null] = await this.drizzleService.db
         .select()
         .from(usersTable)
@@ -103,9 +103,9 @@ export class UsersController {
     { params: { userId: user.id } },
     { roles: adminRoles },
   ])
-  @TsRestHandler(c.getUser)
+  @TsRestHandler(c.users.getUser)
   async getUser(@Param('userId', ParseUUIDPipe) userId: string) {
-    return tsRestHandler(c.getUser, async () => {
+    return tsRestHandler(c.users.getUser, async () => {
       const [user = null] = await this.drizzleService.db
         .select(omitPassword)
         .from(usersTable)
@@ -120,12 +120,12 @@ export class UsersController {
     { params: { userId: user.id } },
     { roles: adminRoles },
   ])
-  @TsRestHandler(c.updateUser)
+  @TsRestHandler(c.users.updateUser)
   async updateUser(
     @Param('userId', new ParseUUIDPipe()) userId: string,
     @Body(ConfiguredValidationPipe) updateUserDto: UserUpdateDto,
   ) {
-    return tsRestHandler(c.updateUser, async () => {
+    return tsRestHandler(c.users.updateUser, async () => {
       const [user] = await this.drizzleService.db
         .update(usersTable)
         .set(updateUserDto)
@@ -141,13 +141,13 @@ export class UsersController {
   }
 
   @Get()
-  @TsRestHandler(c.getUserByAccountOrEmail)
+  @TsRestHandler(c.users.getUserByAccountOrEmail)
   async getUserByAccountOrEmail(
     @Query('providerAccountId') providerAccountId: string,
     @Query('provider') provider: string,
     @Query('email') email: string,
   ) {
-    return tsRestHandler(c.getUserByAccountOrEmail, async () => {
+    return tsRestHandler(c.users.getUserByAccountOrEmail, async () => {
       if (email) {
         const [user = null] = await this.drizzleService.db
           .select(omitPassword)
@@ -179,9 +179,9 @@ export class UsersController {
     { params: { userId: user.id } },
     { roles: adminRoles },
   ])
-  @TsRestHandler(c.deleteUser)
+  @TsRestHandler(c.users.deleteUser)
   async deleteUser(@Param('userId', new ParseUUIDPipe()) userId: string) {
-    return tsRestHandler(c.deleteUser, async () => {
+    return tsRestHandler(c.users.deleteUser, async () => {
       const [user = null] = await this.drizzleService.db
         .delete(usersTable)
         .where(eq(usersTable.id, userId))

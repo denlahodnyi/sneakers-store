@@ -3,8 +3,8 @@ import type {
   CategoryCreateDto,
   CategoryResponseDto,
   CategoryUpdateDto,
-} from '../dto/category.dto.js';
-import type { ErrorResponseData, SuccessResponseData } from '../index.js';
+} from './dto/category.dto.js';
+import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
 const c = initContract();
 const pathname = '/categories';
