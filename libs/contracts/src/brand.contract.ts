@@ -3,8 +3,8 @@ import type {
   BrandCreateDto,
   BrandUpdateDto,
   BrandResponseDto,
-} from '../dto/brand.dto.js';
-import type { ErrorResponseData, SuccessResponseData } from '../index.js';
+} from './dto/brand.dto.js';
+import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
 const c = initContract();
 const pathname = '/brands';

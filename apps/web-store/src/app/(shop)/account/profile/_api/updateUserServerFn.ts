@@ -18,7 +18,7 @@ export async function updateUserServerFn(
   const name = lastName ? `${firstName} ${lastName}` : firstName;
   const cookiesStr = (await cookies()).toString();
 
-  const { body } = await client.updateUser({
+  const { body } = await client.users.updateUser({
     body: { name, id },
     params: { userId: id },
     extraHeaders: {

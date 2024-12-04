@@ -12,11 +12,11 @@ export class AccountsController {
   constructor(private drizzleService: DrizzleService) {}
 
   @Post()
-  @TsRestHandler(c.createAccount)
+  @TsRestHandler(c.accounts.createAccount)
   async createAccount(
     @Body(ConfiguredValidationPipe) createAccountDto: AccountCreateDto,
   ) {
-    return tsRestHandler(c.createAccount, async () => {
+    return tsRestHandler(c.accounts.createAccount, async () => {
       const [account] = await this.drizzleService.db
         .insert(accountsTable)
         .values(createAccountDto)
@@ -26,11 +26,11 @@ export class AccountsController {
   }
 
   @Delete(':provider/:providerAccountId')
-  @TsRestHandler(c.deleteAccount)
+  @TsRestHandler(c.accounts.deleteAccount)
   async deleteAccount(
     @Param() params: { provider: string; providerAccountId: string },
   ) {
-    return tsRestHandler(c.deleteAccount, async () => {
+    return tsRestHandler(c.accounts.deleteAccount, async () => {
       const { provider, providerAccountId } = params;
       const [account = null] = await this.drizzleService.db
         .delete(accountsTable)

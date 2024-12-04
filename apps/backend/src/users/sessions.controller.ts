@@ -27,11 +27,11 @@ export class SessionsController {
   constructor(private drizzleService: DrizzleService) {}
 
   @Post()
-  @TsRestHandler(c.createSession)
+  @TsRestHandler(c.sessions.createSession)
   async createSession(
     @Body(ConfiguredValidationPipe) createSessionDto: SessionCreateDto,
   ) {
-    return tsRestHandler(c.createSession, async () => {
+    return tsRestHandler(c.sessions.createSession, async () => {
       const [session] = await this.drizzleService.db
         .insert(sessionsTable)
         .values(createSessionDto)
@@ -41,9 +41,9 @@ export class SessionsController {
   }
 
   @Get(':sessionId')
-  @TsRestHandler(c.getSession)
+  @TsRestHandler(c.sessions.getSession)
   async getUserAndSessionBySessionId(@Param('sessionId') sessionId: string) {
-    return tsRestHandler(c.getSession, async () => {
+    return tsRestHandler(c.sessions.getSession, async () => {
       const [result] = await this.drizzleService.db
         .select({ users: omitPassword, sessions: sessionsTable })
         .from(sessionsTable)
@@ -65,12 +65,12 @@ export class SessionsController {
   }
 
   @Patch(':sessionId')
-  @TsRestHandler(c.updateSession)
+  @TsRestHandler(c.sessions.updateSession)
   async updateSession(
     @Param('sessionId') sessionId: string,
     @Body(ConfiguredValidationPipe) updateSessionDto: SessionUpdateDto,
   ) {
-    return tsRestHandler(c.updateSession, async () => {
+    return tsRestHandler(c.sessions.updateSession, async () => {
       const [session = null] = await this.drizzleService.db
         .update(sessionsTable)
         .set(updateSessionDto)
@@ -84,9 +84,9 @@ export class SessionsController {
   }
 
   @Delete(':sessionId')
-  @TsRestHandler(c.deleteSession)
+  @TsRestHandler(c.sessions.deleteSession)
   async deleteSession(@Param('sessionId') sessionId: string) {
-    return tsRestHandler(c.deleteSession, async () => {
+    return tsRestHandler(c.sessions.deleteSession, async () => {
       const [session = null] = await this.drizzleService.db
         .delete(sessionsTable)
         .where(eq(sessionsTable.sessionToken, sessionId))

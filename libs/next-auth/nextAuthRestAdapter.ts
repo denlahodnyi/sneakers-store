@@ -16,7 +16,7 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
   // https://github.com/nextauthjs/next-auth/blob/main/packages/adapter-drizzle/src/lib/pg.ts
   async createUser(user) {
     const { name, image, ...rest } = user;
-    const { body, status } = await client.createUser({
+    const { body, status } = await client.users.createUser({
       body: {
         ...rest,
         emailVerified: user.emailVerified?.toISOString(),
@@ -29,25 +29,27 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return mapUserDtoToAdapter(body.data.user);
   },
   async getUser(id) {
-    const { body, status } = await client.getUser({ params: { userId: id } });
+    const { body, status } = await client.users.getUser({
+      params: { userId: id },
+    });
     if (status !== 200) throw new Error('getUser error');
     return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
   },
   async getUserByEmail(email) {
-    const { body } = await client.getUserByAccountOrEmail({
+    const { body } = await client.users.getUserByAccountOrEmail({
       query: { email },
     });
     return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
   },
   async getUserByAccount({ provider, providerAccountId }) {
-    const { body } = await client.getUserByAccountOrEmail({
+    const { body } = await client.users.getUserByAccountOrEmail({
       query: { provider, providerAccountId },
     });
     return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
   },
   async updateUser(user) {
     const { name, image, ...rest } = user;
-    const { body } = await client.updateUser({
+    const { body } = await client.users.updateUser({
       params: { userId: user.id },
       body: {
         ...rest,
@@ -66,18 +68,18 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     }
   },
   async deleteUser(userId) {
-    await client.deleteUser({ params: { userId } });
+    await client.users.deleteUser({ params: { userId } });
   },
   async linkAccount(account) {
-    await client.createAccount({ body: account });
+    await client.accounts.createAccount({ body: account });
   },
   async unlinkAccount({ provider, providerAccountId }) {
-    await client.deleteAccount({
+    await client.accounts.deleteAccount({
       params: { provider, providerAccountId },
     });
   },
   async createSession(session) {
-    const { body, status } = await client.createSession({
+    const { body, status } = await client.sessions.createSession({
       body: {
         ...session,
         expires: session.expires.toISOString(),
@@ -87,7 +89,7 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return mapSessionDtoToAdapter(body.data.session);
   },
   async getSessionAndUser(sessionToken) {
-    const { body } = await client.getSession({
+    const { body } = await client.sessions.getSession({
       params: { sessionId: sessionToken },
     });
     if (body.data.session && body.data.user) {
@@ -99,7 +101,7 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return null;
   },
   async updateSession(session) {
-    const { body, status } = await client.updateSession({
+    const { body, status } = await client.sessions.updateSession({
       params: { sessionId: session.sessionToken },
       body: {
         ...session,
@@ -110,7 +112,7 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return body.data.session ? mapSessionDtoToAdapter(body.data.session) : null;
   },
   async deleteSession(sessionToken) {
-    const { body } = await client.deleteSession({
+    const { body } = await client.sessions.deleteSession({
       params: { sessionId: sessionToken },
     });
     return body.data.session ? mapSessionDtoToAdapter(body.data.session) : null;

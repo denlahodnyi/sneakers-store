@@ -3,8 +3,8 @@ import type {
   ColorCreateDto,
   ColorUpdateDto,
   ColorResponseDto,
-} from '../dto/color.dto.js';
-import type { ErrorResponseData, SuccessResponseData } from '../index.js';
+} from './dto/color.dto.js';
+import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
 const c = initContract();
 const pathname = '/colors';

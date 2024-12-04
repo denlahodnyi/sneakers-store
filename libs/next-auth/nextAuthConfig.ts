@@ -50,7 +50,7 @@ export const getNextAuthConfig = (
         password: {},
       },
       authorize: async ({ email, password }) => {
-        const signInResult = await client.signIn({
+        const signInResult = await client.users.signIn({
           body: {
             email,
             password,
@@ -61,7 +61,7 @@ export const getNextAuthConfig = (
         if (signInResult.body.status === 'success') {
           const user = signInResult.body.data.user;
           const session = createSessionObject(user.id);
-          const result = await client.createSession({ body: session });
+          const result = await client.sessions.createSession({ body: session });
 
           if (result.body.status === 'success') {
             const createdSession = result.body.data.session;
