@@ -1,7 +1,12 @@
 import type { Contract } from '@sneakers-store/contracts';
 import type { initClient } from '@ts-rest/core';
 import type { Adapter } from 'next-auth/adapters';
-import { mapSessionDtoToAdapter, mapUserDtoToAdapter } from './utils.js';
+import {
+  decodeToken,
+  isAuthJsJwtLike,
+  mapSessionDtoToAdapter,
+  mapUserDtoToAdapter,
+} from './utils.js';
 
 type Client = ReturnType<
   typeof initClient<
@@ -89,8 +94,13 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return mapSessionDtoToAdapter(body.data.session);
   },
   async getSessionAndUser(sessionToken) {
+    let sessionId = sessionToken;
+    if (isAuthJsJwtLike(sessionToken)) {
+      const payload = await decodeToken(sessionToken);
+      if (payload?.sessionToken) sessionId = payload.sessionToken;
+    }
     const { body } = await client.sessions.getSession({
-      params: { sessionId: sessionToken },
+      params: { sessionId },
     });
     if (body.data.session && body.data.user) {
       return {
@@ -112,8 +122,13 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return body.data.session ? mapSessionDtoToAdapter(body.data.session) : null;
   },
   async deleteSession(sessionToken) {
+    let sessionId = sessionToken;
+    if (isAuthJsJwtLike(sessionToken)) {
+      const payload = await decodeToken(sessionToken);
+      if (payload?.sessionToken) sessionId = payload.sessionToken;
+    }
     const { body } = await client.sessions.deleteSession({
-      params: { sessionId: sessionToken },
+      params: { sessionId },
     });
     return body.data.session ? mapSessionDtoToAdapter(body.data.session) : null;
   },

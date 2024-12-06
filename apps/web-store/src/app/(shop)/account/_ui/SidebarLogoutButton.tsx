@@ -3,8 +3,7 @@
 import { LogOutIcon } from 'lucide-react';
 import { startTransition, useActionState, useContext, useEffect } from 'react';
 
-import { logoutServerFn } from '~/features/authentication';
-import { AuthContext } from '~/features/authentication/client-only';
+import { logoutServerFn, AuthContext } from '~/features/authentication';
 import { Button, showErrorMessage, type ButtonProps } from '~/shared/ui';
 
 function SidebarLogoutButton({ ...rest }: ButtonProps) {

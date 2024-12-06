@@ -7,7 +7,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { trim } from './custom-transformers.js';
-import { PartialType } from '@nestjs/mapped-types';
 
 export class CategoryCreateDto {
   @Transform(trim)
@@ -24,9 +23,22 @@ export class CategoryCreateDto {
   isActive?: boolean;
 }
 
-export class CategoryUpdateDto extends PartialType(CategoryCreateDto) {
+export class CategoryUpdateDto {
   @IsUUID()
   id: string;
+
+  @Transform(trim)
+  @IsNotEmpty()
+  @MinLength(1)
+  name?: string;
+
+  @IsOptional()
+  @IsUUID()
+  parentId?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
 
 export class CategoryResponseDto {

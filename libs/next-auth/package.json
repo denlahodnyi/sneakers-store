@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "types": "./dist/nextAuthConfig.d.ts",
-    "import": "./dist/nextAuthConfig.js",
-    "require": "./dist/nextAuthConfig.cjs"
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
   },
   "scripts": {
     "build": "tsup"

@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { IsDateString, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class SessionCreateDto {
@@ -10,9 +9,15 @@ export class SessionCreateDto {
   expires: string;
 }
 
-export class SessionUpdateDto extends PartialType(SessionCreateDto) {
+export class SessionUpdateDto {
   @IsNotEmpty()
   sessionToken: string;
+
+  @IsUUID()
+  userId?: string;
+
+  @IsDateString()
+  expires?: string;
 }
 
 export class SessionResponseDto {
