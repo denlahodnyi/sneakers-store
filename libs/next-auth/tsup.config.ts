@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['./nextAuthConfig.ts'],
+  entry: ['./index.ts'],
   format: ['esm', 'cjs'],
   clean: true,
   minify: true,

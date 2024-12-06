@@ -7,7 +7,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { trim } from './custom-transformers.js';
-import { PartialType } from '@nestjs/mapped-types';
 
 export class BrandCreateDto {
   @Transform(trim)
@@ -23,9 +22,21 @@ export class BrandCreateDto {
   isActive?: boolean;
 }
 
-export class BrandUpdateDto extends PartialType(BrandCreateDto) {
+export class BrandUpdateDto {
   @IsUUID()
   id: string;
+
+  @Transform(trim)
+  @IsNotEmpty()
+  @MinLength(1)
+  name?: string;
+
+  @IsOptional()
+  iconUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
 
 export class BrandResponseDto {

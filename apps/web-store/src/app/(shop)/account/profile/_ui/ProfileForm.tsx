@@ -11,7 +11,7 @@ import { LoaderIcon } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { AuthContext } from '~/features/authentication/client-only';
+import { AuthContext } from '~/features/authentication';
 import {
   Button,
   Form,

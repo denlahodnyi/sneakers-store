@@ -1,16 +1,11 @@
 'use client';
 
-import {
-  Alert,
-  Button,
-  CircularProgress,
-  Snackbar,
-  TextField,
-} from '@mui/material';
+import { Button, CircularProgress, TextField } from '@mui/material';
 import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 import { PasswordTextfield } from '~/shared/ui/inputs';
+import { Toast } from '~/shared/ui/toasts';
 
 type InitState = { message: string } | undefined;
 
@@ -32,20 +27,13 @@ function LoginForm(props: { signInServerFn: SignInServerFn }) {
       <TextField required label="Email" name="email" type="email" />
       <PasswordTextfield required label="Password" name="password" />
       <SubmitButton />
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        autoHideDuration={4000}
+      <Toast
         open={showError}
+        severity="error"
         onClose={() => setShowError(false)}
       >
-        <Alert
-          severity="error"
-          variant="standard"
-          onClose={() => setShowError(false)}
-        >
-          {state?.message}
-        </Alert>
-      </Snackbar>
+        {state?.message}
+      </Toast>
     </form>
   );
 }

@@ -37,6 +37,9 @@ importers:
       '@sneakers-store/contracts':
         specifier: workspace:*
         version: link:../../libs/contracts
+      '@sneakers-store/next-auth':
+        specifier: workspace:*
+        version: link:../../libs/next-auth
       '@ts-rest/nest':
         specifier: ^3.51.0
         version: 3.51.0(@nestjs/common@10.4.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@ts-rest/core@3.51.0(@types/node@22.10.1)(zod@3.23.8))(rxjs@7.8.1)(zod@3.23.8)
@@ -224,6 +227,9 @@ importers:
       '@ts-rest/core':
         specifier: ^3.51.0
         version: 3.51.0(@types/node@22.10.1)(zod@3.23.8)
+      client-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       jiti:
         specifier: ^2.3.3
         version: 2.3.3
@@ -242,6 +248,9 @@ importers:
       react-hook-form:
         specifier: ^7.53.2
         version: 7.53.2(react@19.0.0-rc-69d4b800-20241021)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -345,6 +354,9 @@ importers:
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
+      client-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

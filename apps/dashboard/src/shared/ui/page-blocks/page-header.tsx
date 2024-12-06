@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Link, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
+import Link from 'next/link';
 import { useTransition, type PropsWithChildren } from 'react';
 
 export function PageHeaderContainer({ children }: PropsWithChildren) {

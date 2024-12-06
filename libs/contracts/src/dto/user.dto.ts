@@ -1,4 +1,7 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
+// @nestjs/mapped-types was removed because it breaks Nextjs build process (in
+// Dashboard at middleware)
+// import { PartialType, PickType } from '@nestjs/mapped-types';
+
 // class-transformer MUST BE 0.3.1, otherwise don't use @nestjs/mapped-types
 // cause it breaks on frontend (but not on backend)
 // https://stackoverflow.com/questions/70802610/module-not-found-error-cant-resolve-class-transformer-storage-angular-uni
@@ -40,12 +43,38 @@ export class UserCreateDto {
   password?: string;
 }
 
-export class UserUpdateDto extends PartialType(UserCreateDto) {
+export class UserUpdateDto {
   @IsUUID()
   id: string;
+
+  @IsOptional()
+  @Transform(trim)
+  @MinLength(1, { message: 'Name is too short' })
+  name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsDateString()
+  emailVerified?: string | null;
+
+  @IsOptional()
+  image?: string | null;
+
+  @IsOptional()
+  @Transform(trim)
+  @MinLength(5)
+  @MaxLength(10)
+  @IsAlphanumeric()
+  password?: string | null;
 }
 
-export class UserSignInDto extends PickType(UserCreateDto, ['email']) {
+export class UserSignInDto {
+  @IsEmail()
+  email: string;
+
   @Transform(trim)
   @IsNotEmpty()
   @MinLength(5)

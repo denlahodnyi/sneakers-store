@@ -9,7 +9,7 @@ async function NewBrandPage() {
   return (
     <PageContentContainer>
       <PageHeaderContainer>
-        <PageTitle>Create new category</PageTitle>
+        <PageTitle>Create new brand</PageTitle>
       </PageHeaderContainer>
       <BrandForm actionType="create" />
     </PageContentContainer>

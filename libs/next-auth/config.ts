@@ -2,10 +2,13 @@ import type { User, NextAuthConfig } from 'next-auth';
 import type { Provider } from 'next-auth/providers';
 import Credentials from 'next-auth/providers/credentials';
 import { encode as defaultEncode } from 'next-auth/jwt';
-import type { Contract, UserResponseDto } from '@sneakers-store/contracts';
-import type { initClient } from '@ts-rest/core';
-import getNextAuthRestAdapter from './nextAuthRestAdapter.js';
 import Google from 'next-auth/providers/google';
+import type { initClient } from '@ts-rest/core';
+import type { Contract, UserResponseDto } from '@sneakers-store/contracts';
+
+import getNextAuthRestAdapter from './rest-adapter.js';
+import { SESSION_COOKIE_NAME } from './constants.js';
+import { createSessionObject } from './utils.js';
 
 declare module 'next-auth' {
   interface User extends UserResponseDto {
@@ -16,26 +19,19 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     sessionToken?: string;
+    role: UserResponseDto['role'];
   }
 }
-
-const createSessionObject = (
-  userId: string
-): {
-  sessionToken: string;
-  userId: string;
-  expires: string;
-} => ({
-  expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days,
-  userId,
-  sessionToken: crypto.randomUUID(),
-});
 
 export const getNextAuthConfig = (
   client: ReturnType<typeof initClient<Contract, { baseUrl: string }>>,
   app: 'store' | 'dashboard',
-  providers: Provider[] = []
+  otherOptions: Pick<Partial<NextAuthConfig>, 'debug' | 'providers'> = {
+    debug: false,
+    providers: [],
+  }
 ): NextAuthConfig => ({
+  debug: otherOptions?.debug || false,
   session: {
     strategy: 'database',
   },
@@ -43,7 +39,7 @@ export const getNextAuthConfig = (
     // For only Credentials provider to work its important to add Google (or any
     // other provider). It fixes UnsupportedStrategy: Signing in with credentials only supported if JWT strategy is enabled.
     Google,
-    ...providers,
+    ...(otherOptions?.providers || []),
     Credentials({
       credentials: {
         email: {},
@@ -96,40 +92,49 @@ export const getNextAuthConfig = (
       return true;
     },
     async jwt({ token, account, user }) {
-      if (account?.provider === 'credentials' && user.sessionToken) {
-        token.isCredentials = true;
-        token.sessionToken = user.sessionToken;
-      }
+      // if (account?.provider === 'credentials' && user.sessionToken) {
+      //   token.isCredentials = true;
+      //   token.sessionToken = user.sessionToken;
+      // }
+      // return token;
+
+      token.sessionToken = user.sessionToken;
+      token.role = user.role;
       return token;
     },
   },
   jwt: {
     async encode(params) {
-      if (params.token?.isCredentials && params.token.sessionToken) {
-        // We need to save sessionToken in session cookie to allow fetching
-        // session. Default behavior prevents it by creating JWT token and
-        // placing it in cookie, so it must be disabled.
-        return params.token.sessionToken as string;
-      }
+      // if (params.token?.isCredentials && params.token.sessionToken) {
+      //   // We need to save sessionToken in session cookie to allow fetching
+      //   // session. Default behavior prevents it by creating JWT token and
+      //   // placing it in cookie, so it must be disabled.
+      //   return params.token.sessionToken as string;
+      // }
       return defaultEncode(params);
     },
   },
-  events: {
-    signIn(msg) {
-      console.log('SignIn ev', msg);
-    },
-    signOut(msg) {
-      console.log('SignOut ev', msg);
-    },
-    session(msg) {
-      console.log('Session ev', msg);
-    },
-    createUser(msg) {
-      console.log('CreateUser ev', msg);
-    },
-    linkAccount(msg) {
-      console.log('LinkAcc ev', msg);
+  // events: {
+  //   signIn(msg) {
+  //     console.log('SignIn ev', msg);
+  //   },
+  //   signOut(msg) {
+  //     console.log('SignOut ev', msg);
+  //   },
+  //   session(msg) {
+  //     console.log('Session ev', msg);
+  //   },
+  //   createUser(msg) {
+  //     console.log('CreateUser ev', msg);
+  //   },
+  //   linkAccount(msg) {
+  //     console.log('LinkAcc ev', msg);
+  //   },
+  // },
+  adapter: getNextAuthRestAdapter(client),
+  cookies: {
+    sessionToken: {
+      name: SESSION_COOKIE_NAME,
     },
   },
-  adapter: getNextAuthRestAdapter(client),
 });

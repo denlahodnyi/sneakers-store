@@ -3,6 +3,7 @@ import * as t from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 
 export type UserEntity = InferSelectModel<typeof usersTable>;
+export type SessionEntity = InferSelectModel<typeof sessionsTable>;
 
 export const Role = {
   SUPER_ADMIN: 'super_admin',

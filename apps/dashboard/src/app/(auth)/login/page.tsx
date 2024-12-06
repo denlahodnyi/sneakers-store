@@ -2,6 +2,7 @@ import { Card, Typography } from '@mui/material';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 
 import { AuthError, signIn } from '~/shared/api';
+import { ExpiredSessionAlert } from '~/shared/ui/toasts';
 import LoginForm from './LoginForm';
 
 function LoginPage() {
@@ -37,6 +38,7 @@ function LoginPage() {
         </Typography>
         <LoginForm signInServerFn={signInServerFn} />
       </Card>
+      <ExpiredSessionAlert />
     </div>
   );
 }
