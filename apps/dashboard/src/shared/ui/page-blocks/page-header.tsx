@@ -20,20 +20,23 @@ export function PageTitle({ children }: PropsWithChildren) {
   );
 }
 
-export function CreateRecordLink({ href }: { href: string }) {
+export function RecordLinkBase({
+  href,
+  children,
+}: { href: string } & PropsWithChildren) {
   return (
     <Button component={Link} href={href} size="large" variant="outlined">
-      Create new
+      {children}
     </Button>
   );
 }
 
+export function CreateRecordLink({ href }: { href: string }) {
+  return <RecordLinkBase href={href}>Create new</RecordLinkBase>;
+}
+
 export function EditRecordLink({ href }: { href: string }) {
-  return (
-    <Button component={Link} href={href} size="large" variant="outlined">
-      Edit
-    </Button>
-  );
+  return <RecordLinkBase href={href}>Edit</RecordLinkBase>;
 }
 
 export function DeleteRecordButton({ onDelete }: { onDelete: () => unknown }) {

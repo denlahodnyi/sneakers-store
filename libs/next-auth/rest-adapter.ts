@@ -111,10 +111,21 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return null;
   },
   async updateSession(session) {
+    let sessionId = session.sessionToken;
+    let expires = session.expires;
+    let userId = session.userId;
+    if (isAuthJsJwtLike(session.sessionToken)) {
+      const payload = await decodeToken(session.sessionToken);
+      if (payload?.sessionToken) {
+        sessionId = payload.sessionToken;
+        userId = payload.sub;
+      }
+    }
     const { body, status } = await client.sessions.updateSession({
-      params: { sessionId: session.sessionToken },
+      params: { sessionId },
       body: {
-        ...session,
+        sessionToken: sessionId,
+        userId,
         expires: session.expires ? session.expires.toISOString() : undefined,
       },
     });

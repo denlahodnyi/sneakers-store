@@ -1,10 +1,15 @@
 import { initContract } from '@ts-rest/core';
+
 import { categoryContract } from './src/category.contract.js';
 import { brandContract } from './src/brand.contract.js';
 import { colorContract } from './src/color.contract.js';
 import { userContract } from './src/user.contract.js';
 import { sessionContract } from './src/session.contract.js';
 import { accountContract } from './src/account.contract.js';
+import { sizeContract } from './src/size.contract.js';
+import { productContract } from './src/product.contract.js';
+import { productVariantContract } from './src/product-var.contract.js';
+import { productSkuContract } from './src/product-sku.contract.js';
 
 const c = initContract();
 
@@ -24,6 +29,10 @@ export const contract = c.router(
     categories: categoryContract,
     brands: brandContract,
     colors: colorContract,
+    sizes: sizeContract,
+    products: productContract,
+    productVariants: productVariantContract,
+    productSkus: productSkuContract,
   },
   { strictStatusCodes: true }
 );
@@ -38,3 +47,5 @@ export * from './src/dto/session.dto.js';
 export * from './src/dto/category.dto.js';
 export * from './src/dto/brand.dto.js';
 export * from './src/dto/color.dto.js';
+export * from './src/dto/size.dto.js';
+export * from './src/dto/product.dto.js';

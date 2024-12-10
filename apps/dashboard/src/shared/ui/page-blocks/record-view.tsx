@@ -23,3 +23,12 @@ export function AttributeValue({
     </Typography>
   );
 }
+
+export function ColorDot({ hex = '#000' }: { hex?: string }) {
+  return (
+    <span
+      className="border-1 mr-2 inline-block min-h-[20px] min-w-[20px] rounded-full border border-solid border-slate-400 align-text-bottom"
+      style={{ backgroundColor: hex }}
+    />
+  );
+}

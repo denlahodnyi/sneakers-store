@@ -2,6 +2,7 @@ import {
   Attribute,
   AttributeName,
   AttributeValue,
+  ColorDot,
   DeleteRecordButton,
   EditRecordLink,
   PageContentContainer,
@@ -41,10 +42,7 @@ async function ColorPage({ params }: { params: Promise<{ colorId: string }> }) {
       <Attribute>
         <AttributeName>HEX</AttributeName>
         <AttributeValue>
-          <span
-            className="mr-2 inline-block min-h-[20px] min-w-[20px] rounded-full align-text-bottom"
-            style={{ backgroundColor: color.hex }}
-          />
+          <ColorDot hex={color.hex} />
           <span>{color.hex}</span>
         </AttributeValue>
       </Attribute>

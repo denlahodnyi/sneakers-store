@@ -1,6 +1,11 @@
 'use server';
 
-import type { ColorCreateDto, ColorUpdateDto } from '@sneakers-store/contracts';
+import type {
+  ColorCreateDto,
+  ColorUpdateDto,
+  Contract,
+} from '@sneakers-store/contracts';
+import type { ClientInferRequest } from '@ts-rest/core';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -75,8 +80,10 @@ export async function createColor(prev: unknown, formData: FormData) {
   }
 }
 
-export async function getColors() {
-  const { body } = await client.colors.getColors();
+export async function getColors(
+  query?: ClientInferRequest<Contract['colors']['getColors']>['query'],
+) {
+  const { body } = await client.colors.getColors({ query: query || null });
   return body.data;
 }
 

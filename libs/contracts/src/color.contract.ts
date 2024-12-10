@@ -3,6 +3,7 @@ import type {
   ColorCreateDto,
   ColorUpdateDto,
   ColorResponseDto,
+  ColorQueryDto,
 } from './dto/color.dto.js';
 import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
@@ -37,6 +38,7 @@ const colorContract = c.router({
     method: 'GET',
     path: pathname,
     summary: 'Get all colors',
+    query: c.type<null | ColorQueryDto>(),
     responses: {
       200: c.type<SuccessResponseData<{ colors: ColorResponseDto[] }>>(),
     },

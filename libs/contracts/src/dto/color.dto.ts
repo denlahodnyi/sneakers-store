@@ -1,6 +1,7 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsBooleanString,
   IsHexColor,
   IsNotEmpty,
   IsOptional,
@@ -8,6 +9,13 @@ import {
   MinLength,
 } from 'class-validator';
 import { trim } from './custom-transformers.js';
+
+export class ColorQueryDto {
+  @IsOptional()
+  @Transform(({ value }) => (value === 'true' ? true : false))
+  @IsBoolean()
+  active?: boolean;
+}
 
 export class ColorCreateDto {
   @Transform(trim)

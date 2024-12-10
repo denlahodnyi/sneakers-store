@@ -21,7 +21,7 @@ const schema = z.object({
   hex: z
     .string()
     .startsWith('#', 'Should start with #')
-    .regex(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
+    .regex(/^#([0-9a-f]{6})$/i)
     .trim(),
 });
 

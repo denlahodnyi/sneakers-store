@@ -14,6 +14,6 @@ export const env = createEnv({
   emptyStringAsUndefined: true,
   runtimeEnv: {
     API_URL: process.env.API_URL,
-    [`${clientPrefix}API_URL`]: process.env.API_URL,
+    [`${clientPrefix}API_URL`]: process.env.NEXT_PUBLIC_API_URL,
   },
 });

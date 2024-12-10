@@ -18,7 +18,7 @@ import { createBrand } from '../_api/brand-server-fn';
 const schema = z.object({
   name: z.string().min(1).trim(),
   isActive: z.boolean(),
-  iconUrl: z.string().url().trim().optional(),
+  iconUrl: z.string().url().trim().or(z.literal('')).optional(),
 });
 
 type BrandFormProps = {

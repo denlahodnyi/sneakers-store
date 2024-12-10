@@ -1,12 +1,15 @@
 'use client';
 
 import {
+  CategoryOutlined,
   Copyright,
   HomeOutlined,
+  Inventory2Outlined,
+  InventoryOutlined,
   LogoutOutlined,
   MenuOutlined,
   Palette,
-  ViewListOutlined,
+  StraightenOutlined,
 } from '@mui/icons-material';
 import {
   AppBar,
@@ -33,9 +36,24 @@ const links = [
     icon: <HomeOutlined />,
   },
   {
+    href: '/products',
+    label: 'Products',
+    icon: <InventoryOutlined />,
+  },
+  {
+    href: '/product-variants',
+    label: 'Product variants',
+    icon: <InventoryOutlined />,
+  },
+  {
+    href: '/skus',
+    label: 'SKUs',
+    icon: <Inventory2Outlined />,
+  },
+  {
     href: '/categories',
     label: 'Categories',
-    icon: <ViewListOutlined />,
+    icon: <CategoryOutlined />,
   },
   {
     href: '/brands',
@@ -46,6 +64,11 @@ const links = [
     href: '/colors',
     label: 'Colors',
     icon: <Palette />,
+  },
+  {
+    href: '/sizes',
+    label: 'Sizes',
+    icon: <StraightenOutlined />,
   },
 ];
 

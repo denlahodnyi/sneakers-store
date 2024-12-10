@@ -1,2 +1,2 @@
-export * from './contractsClient';
+export * from './serverContractsClient';
 export * from './auth';

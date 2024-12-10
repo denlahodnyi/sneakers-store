@@ -9,15 +9,18 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
 import {
   contract as c,
   ColorCreateDto,
   ColorUpdateDto,
+  ColorQueryDto,
 } from '@sneakers-store/contracts';
-import { eq, type InferSelectModel } from 'drizzle-orm';
+import { and, eq, type InferSelectModel, type SQL } from 'drizzle-orm';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
@@ -61,9 +64,24 @@ export class ColorsController {
 
   @Get()
   @TsRestHandler(c.colors.getColors)
-  getColors() {
+  getColors(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+      }),
+    )
+    query?: ColorQueryDto,
+  ) {
     return tsRestHandler(c.colors.getColors, async () => {
-      const colors = await this.drizzleService.db.select().from(colorsTable);
+      const filters: SQL[] = [];
+      if (query?.active !== undefined) {
+        filters.push(eq(colorsTable.isActive, query.active));
+      }
+      const colors = await this.drizzleService.db
+        .select()
+        .from(colorsTable)
+        .where(and(...filters));
       return { status: 200, body: { status: 'success', data: { colors } } };
     });
   }
