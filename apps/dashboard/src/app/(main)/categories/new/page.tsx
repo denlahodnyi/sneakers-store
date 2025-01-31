@@ -7,7 +7,7 @@ import { CategoryForm } from '../_ui';
 import { getCategories } from '../_api/category-server-fn';
 
 async function NewCategoryPage() {
-  const { categories } = await getCategories();
+  const { categories } = await getCategories({ active: true });
 
   return (
     <PageContentContainer>

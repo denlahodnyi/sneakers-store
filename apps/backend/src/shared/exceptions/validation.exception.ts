@@ -1,8 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-
-export interface FormattedErrors {
-  [k: string]: string[] | FormattedErrors;
-}
+import type { FormattedErrors } from '@sneakers-store/contracts';
 
 // Custom validation exception that holds errors (aka form errors)
 export class ValidationException extends HttpException {

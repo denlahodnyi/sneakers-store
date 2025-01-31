@@ -15,7 +15,7 @@ function MuiThemeProvider(props: MuiThemeProviderProps) {
   }, []);
 
   const getRootContainer = () =>
-    typeof document !== undefined ? document.getElementById('#__next') : null;
+    typeof document !== undefined ? document.getElementById('__next') : null;
 
   return (
     <ThemeProvider

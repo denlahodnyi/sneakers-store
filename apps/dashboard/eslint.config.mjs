@@ -132,9 +132,16 @@ export default tseslint.config(
       ],
       '@stylistic/brace-style': ['error', '1tbs'],
       '@stylistic/indent': ['off'],
+      '@stylistic/indent-binary-ops': ['off'], // conflicts with Prettier
       '@stylistic/operator-linebreak': ['off'], // conflicts with Prettier
       '@stylistic/arrow-parens': ['off'], // conflicts with Prettier
       '@stylistic/multiline-ternary': ['off'], // conflicts with Prettier
+      '@stylistic/jsx-wrap-multilines': ['off'], // conflicts with Prettier
+      '@stylistic/jsx-closing-tag-location': ['off'], // conflicts with Prettier
+      '@stylistic/jsx-one-expression-per-line': [
+        'error',
+        { allow: ['single-line', 'non-jsx'] },
+      ],
     },
   },
   eslintPluginPrettierRecommended,

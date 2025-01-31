@@ -1,21 +1,27 @@
 'use server';
 
-import type { BrandCreateDto, BrandUpdateDto } from '@sneakers-store/contracts';
+import type {
+  BrandCreateDto,
+  BrandUpdateDto,
+  Contract,
+  inferDtoErrors,
+} from '@sneakers-store/contracts';
+import type { ClientInferRequest } from '@ts-rest/core';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import type { BrandSchema } from '~/entities/brand';
 import { getClient } from '~/shared/api';
 
 const client = getClient();
 const redirectTo = '/brands';
 
-type ParsedFormData =
-  | ({ _action: 'create' } & BrandCreateDto)
-  | ({ _action: 'edit' } & BrandUpdateDto);
+type Data =
+  | ({ _action: 'create' } & BrandSchema)
+  | ({ _action: 'edit'; id: number } & BrandSchema);
 
-export async function createBrand(prev: unknown, formData: FormData) {
-  const data = Object.fromEntries(formData) as unknown as ParsedFormData;
+export async function createBrand(prev: unknown, data: Data) {
   const cookie = await cookies();
 
   if (data._action === 'create') {
@@ -25,8 +31,6 @@ export async function createBrand(prev: unknown, formData: FormData) {
       },
       body: {
         ...data,
-        iconUrl: data.iconUrl || null,
-        isActive: formData.get('isActive') === 'true',
       },
     });
 
@@ -36,7 +40,7 @@ export async function createBrand(prev: unknown, formData: FormData) {
     } else if (body.errors) {
       return {
         success: false,
-        errors: body.errors,
+        errors: body.errors as inferDtoErrors<BrandCreateDto>,
         _ts: Date.now().valueOf(),
       };
     } else {
@@ -54,8 +58,6 @@ export async function createBrand(prev: unknown, formData: FormData) {
       params: { brandId },
       body: {
         ...data,
-        iconUrl: data.iconUrl || null,
-        isActive: formData.get('isActive') === 'true',
         id: brandId,
       },
     });
@@ -66,7 +68,7 @@ export async function createBrand(prev: unknown, formData: FormData) {
     } else if (body.errors) {
       return {
         success: false,
-        errors: body.errors,
+        errors: body.errors as inferDtoErrors<BrandUpdateDto>,
         _ts: Date.now().valueOf(),
       };
     } else {
@@ -77,12 +79,14 @@ export async function createBrand(prev: unknown, formData: FormData) {
   }
 }
 
-export async function getBrands() {
-  const { body } = await client.brands.getBrands();
+export async function getBrands(
+  query?: ClientInferRequest<Contract['brands']['getBrands']>['query'],
+) {
+  const { body } = await client.brands.getBrands({ query: query || null });
   return body.data;
 }
 
-export async function getBrand(brandId: string) {
+export async function getBrand(brandId: number) {
   const { body } = await client.brands.getBrandById({
     params: { brandId },
   });
@@ -90,7 +94,7 @@ export async function getBrand(brandId: string) {
   else throw new Error(body.message || 'Cannot get brand', { cause: body });
 }
 
-export async function deleteBrand(brandId: string) {
+export async function deleteBrand(brandId: number) {
   const cookie = await cookies();
   const { body } = await client.brands.deleteBrand({
     extraHeaders: { Cookie: cookie.toString() },
@@ -104,7 +108,7 @@ export async function deleteBrand(brandId: string) {
   }
 }
 
-export async function bulkDeleteBrand(ids: string[]) {
+export async function bulkDeleteBrand(ids: number[]) {
   const cookie = await cookies();
   const { body } = await client.brands.deleteBrands({
     extraHeaders: { Cookie: cookie.toString() },

@@ -25,7 +25,7 @@ function GoogleSigninButton(props: ComponentProps<'button'>) {
     <Button
       {...props}
       disabled={isPending}
-      variant="secondary"
+      variant="tertiary"
       onClick={async () => {
         startTransition(() => {
           action();

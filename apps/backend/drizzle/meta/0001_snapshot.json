@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -41,9 +41,7 @@
         "brands_name_unique": {
           "name": "brands_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -56,7 +54,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -75,7 +73,7 @@
         },
         "parent_id": {
           "name": "parent_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -86,12 +84,8 @@
           "name": "categories_parent_id_categories_id_fk",
           "tableFrom": "categories",
           "tableTo": "categories",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -102,7 +96,7 @@
       "checkConstraints": {
         "parent_id_check1": {
           "name": "parent_id_check1",
-          "value": "\"categories\".\"parent_id\" != \"categories\".\"id\""
+          "value": "\"categories\".\"parent_id\"::int != \"categories\".\"id\"::int"
         }
       },
       "isRLSEnabled": false
@@ -113,7 +107,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -125,7 +119,7 @@
         },
         "hex": {
           "name": "hex",
-          "type": "varchar(7)",
+          "type": "varchar(7)[]",
           "primaryKey": false,
           "notNull": true
         },
@@ -144,9 +138,7 @@
         "colors_name_unique": {
           "name": "colors_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+          "columns": ["name"]
         }
       },
       "policies": {},
@@ -230,12 +222,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -243,10 +231,7 @@
       "compositePrimaryKeys": {
         "accounts_provider_provider_account_id_pk": {
           "name": "accounts_provider_provider_account_id_pk",
-          "columns": [
-            "provider",
-            "provider_account_id"
-          ]
+          "columns": ["provider", "provider_account_id"]
         }
       },
       "uniqueConstraints": {},
@@ -283,12 +268,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -354,9 +335,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -368,10 +347,7 @@
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "super_admin",
-        "admin"
-      ]
+      "values": ["super_admin", "admin"]
     }
   },
   "schemas": {},

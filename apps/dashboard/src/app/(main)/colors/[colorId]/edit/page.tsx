@@ -3,7 +3,7 @@ import {
   PageHeaderContainer,
   PageTitle,
 } from '~/shared/ui/page-blocks';
-import { getColor } from '../../_api/color-server-fn';
+import { getColor } from '../../_api/color.server-fn';
 import { ColorForm } from '../../_ui';
 
 async function EditColorPage({
@@ -12,7 +12,7 @@ async function EditColorPage({
   params: Promise<{ colorId: string }>;
 }) {
   const { colorId } = await params;
-  const { color } = await getColor(colorId);
+  const { color } = await getColor(Number(colorId));
 
   return (
     <PageContentContainer>

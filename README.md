@@ -32,9 +32,9 @@ pnpm dev
 
 ## TODO
 
-- [ ] products and filters
-- [ ] featured products
-- [ ] search by products
+- [x] products and filters
+- [x] featured products
+- [x] search by products
 - [ ] cart
 - [ ] payment and orders
 - [ ] favorites

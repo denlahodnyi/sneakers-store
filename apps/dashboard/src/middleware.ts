@@ -2,7 +2,9 @@ import { decodeToken, SESSION_COOKIE_NAME } from '@sneakers-store/next-auth';
 import { cookies } from 'next/headers';
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { signOut } from '~/shared/api';
+// Some files in /shared/api can use node api, while middleware supports only
+// edge runtime, so we need to import directly from /auth and not from index
+import { signOut } from '~/shared/api/auth';
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],

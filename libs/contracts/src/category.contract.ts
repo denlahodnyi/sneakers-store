@@ -1,6 +1,7 @@
 import { initContract } from '@ts-rest/core';
 import type {
   CategoryCreateDto,
+  CategoryQueryDto,
   CategoryResponseDto,
   CategoryUpdateDto,
 } from './dto/category.dto.js';
@@ -27,7 +28,7 @@ const categoryContract = c.router({
     method: 'GET',
     path: `${pathname}/${idSlug}`,
     summary: 'Get products category by id',
-    pathParams: c.type<{ categoryId: string }>(),
+    pathParams: c.type<{ categoryId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ category: CategoryResponseDto }>>(),
       404: c.type<ErrorResponseData>(),
@@ -37,6 +38,7 @@ const categoryContract = c.router({
     method: 'GET',
     path: pathname,
     summary: 'Get all categories',
+    query: c.type<null | CategoryQueryDto>(),
     responses: {
       200: c.type<SuccessResponseData<{ categories: CategoryResponseDto[] }>>(),
     },
@@ -46,7 +48,7 @@ const categoryContract = c.router({
     path: `${pathname}/${idSlug}`,
     summary: 'Update products category by id',
     body: c.type<CategoryUpdateDto>(),
-    pathParams: c.type<{ categoryId: string }>(),
+    pathParams: c.type<{ categoryId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ category: CategoryResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -59,7 +61,7 @@ const categoryContract = c.router({
     method: 'DELETE',
     path: `${pathname}/${idSlug}`,
     summary: 'Delete products category by id',
-    pathParams: c.type<{ categoryId: string }>(),
+    pathParams: c.type<{ categoryId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ category: CategoryResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -72,7 +74,7 @@ const categoryContract = c.router({
     method: 'POST',
     path: `${pathname}/command/bulkDelete`,
     summary: 'Delete multiple categories',
-    body: c.type<{ ids: string[] }>(),
+    body: c.type<{ ids: number[] }>(),
     responses: {
       200: c.type<SuccessResponseData<{ categories: CategoryResponseDto[] }>>(),
       401: c.type<ErrorResponseData>(),

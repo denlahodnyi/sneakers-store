@@ -7,19 +7,13 @@ import {
   Switch,
   TextField,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { BrandResponseDto } from '@sneakers-store/contracts';
-import { startTransition, useActionState, useRef } from 'react';
+import { startTransition, useActionState, useEffect, useRef } from 'react';
 
+import { brandSchema, type BrandSchema } from '~/entities/brand';
 import { createBrand } from '../_api/brand-server-fn';
-
-const schema = z.object({
-  name: z.string().min(1).trim(),
-  isActive: z.boolean(),
-  iconUrl: z.string().url().trim().optional(),
-});
 
 type BrandFormProps = {
   defaultValues?: BrandResponseDto;
@@ -27,9 +21,9 @@ type BrandFormProps = {
 
 function BrandForm({ id, defaultValues, actionType }: BrandFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [, action, pending] = useActionState(createBrand, undefined);
-  const { control, formState, handleSubmit } = useForm({
-    resolver: zodResolver(schema),
+  const [state, action, pending] = useActionState(createBrand, undefined);
+  const { control, formState, handleSubmit, setError } = useForm({
+    resolver: zodResolver(brandSchema),
     defaultValues: defaultValues
       ? { ...defaultValues, iconUrl: defaultValues.iconUrl ?? '' }
       : {
@@ -40,18 +34,33 @@ function BrandForm({ id, defaultValues, actionType }: BrandFormProps) {
   });
   const { isDirty } = formState;
 
-  const onSubmit = () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const fd = new FormData(formRef.current!);
+  const onSubmit: SubmitHandler<BrandSchema> = (data) => {
     startTransition(() => {
-      action(fd);
+      action(
+        actionType === 'edit'
+          ? { ...data, _action: 'edit', id: Number(id) }
+          : { ...data, _action: 'create' },
+      );
     });
   };
 
+  useEffect(() => {
+    if (!state?.success && state?.errors) {
+      (
+        Object.entries(state.errors) as [keyof typeof state.errors, string[]][]
+      ).forEach(([key, messages]) => {
+        if (Array.isArray(messages)) {
+          setError(key, {
+            type: 'custom',
+            message: messages[0],
+          });
+        }
+      });
+    }
+  }, [setError, state]);
+
   return (
     <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-      {actionType === 'edit' && <input name="id" type="hidden" value={id} />}
-      <input name="_action" type="hidden" value={actionType} />
       <FormGroup sx={{ gap: 5, maxWidth: '480px' }}>
         <Controller
           control={control}

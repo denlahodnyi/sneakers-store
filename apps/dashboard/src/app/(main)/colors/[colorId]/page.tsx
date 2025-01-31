@@ -2,6 +2,7 @@ import {
   Attribute,
   AttributeName,
   AttributeValue,
+  ColorDot,
   DeleteRecordButton,
   EditRecordLink,
   PageContentContainer,
@@ -9,12 +10,12 @@ import {
   PageHeaderContainer,
   PageTitle,
 } from '~/shared/ui/page-blocks';
-import { deleteColor, getColor } from '../_api/color-server-fn';
+import { deleteColor, getColor } from '../_api/color.server-fn';
 
 async function ColorPage({ params }: { params: Promise<{ colorId: string }> }) {
   const { colorId } = await params;
-  const { color } = await getColor(colorId);
-  const deleteById = deleteColor.bind(null, colorId);
+  const { color } = await getColor(Number(colorId));
+  const deleteById = deleteColor.bind(null, Number(colorId));
 
   return (
     <PageContentContainer>
@@ -41,11 +42,8 @@ async function ColorPage({ params }: { params: Promise<{ colorId: string }> }) {
       <Attribute>
         <AttributeName>HEX</AttributeName>
         <AttributeValue>
-          <span
-            className="mr-2 inline-block min-h-[20px] min-w-[20px] rounded-full align-text-bottom"
-            style={{ backgroundColor: color.hex }}
-          />
-          <span>{color.hex}</span>
+          <ColorDot hex={color.hex} />
+          <span>{color.hex.join(', ')}</span>
         </AttributeValue>
       </Attribute>
     </PageContentContainer>

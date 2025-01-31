@@ -4,7 +4,7 @@ import { Button, CircularProgress, TextField } from '@mui/material';
 import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
-import { PasswordTextfield } from '~/shared/ui/inputs';
+import { PasswordTextfield } from '~/shared/ui/form';
 import { Toast } from '~/shared/ui/toasts';
 
 type InitState = { message: string } | undefined;

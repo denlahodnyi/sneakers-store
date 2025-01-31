@@ -22,6 +22,7 @@ const config: Config = {
         background: 'rgb(var(--palette-common-backgroundChannel))',
         main: 'rgb(var(--palette-primary-mainChannel))',
         secondary: 'rgb(var(--palette-secondary-mainChannel))',
+        error: 'rgb(var(--palette-error-mainChannel))',
       },
     },
   },

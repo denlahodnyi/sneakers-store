@@ -15,6 +15,13 @@
       "when": 1733238324033,
       "tag": "0001_cat_color_brands",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738337331059,
+      "tag": "0002_products_and_catalog",
+      "breakpoints": true
     }
   ]
 }

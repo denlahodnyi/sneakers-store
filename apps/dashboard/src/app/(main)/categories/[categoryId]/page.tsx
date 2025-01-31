@@ -17,8 +17,8 @@ async function CategoryPage({
   params: Promise<{ categoryId: string }>;
 }) {
   const { categoryId } = await params;
-  const { category } = await getCategory(categoryId);
-  const deleteById = deleteCategory.bind(null, categoryId);
+  const { category } = await getCategory(Number(categoryId));
+  const deleteById = deleteCategory.bind(null, Number(categoryId));
 
   return (
     <PageContentContainer>
@@ -37,6 +37,10 @@ async function CategoryPage({
       <Attribute>
         <AttributeName>Name</AttributeName>
         <AttributeValue>{category.name}</AttributeValue>
+      </Attribute>
+      <Attribute>
+        <AttributeName>Slug</AttributeName>
+        <AttributeValue>{category.slug}</AttributeValue>
       </Attribute>
       <Attribute>
         <AttributeName>Active</AttributeName>

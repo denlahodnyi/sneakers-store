@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "parent_id": null,
+    "name": "Sneakers",
+    "slug": "sneakers",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "parent_id": 1,
+    "name": "Low-Top Sneakers",
+    "slug": "low-top-sneakers",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "parent_id": 1,
+    "name": "High-Top Sneakers",
+    "slug": "high-top-sneakers",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "parent_id": null,
+    "name": "Sport",
+    "slug": "sport",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "parent_id": 4,
+    "name": "Running",
+    "slug": "running",
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "parent_id": 4,
+    "name": "Football",
+    "slug": "football",
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "parent_id": 4,
+    "name": "Basketball",
+    "slug": "basketball",
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "parent_id": 4,
+    "name": "Training",
+    "slug": "training",
+    "is_active": true
+  }
+]

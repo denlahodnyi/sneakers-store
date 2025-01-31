@@ -4,26 +4,23 @@ import {
   Button,
   FormControlLabel,
   FormGroup,
+  IconButton,
   Switch,
   TextField,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
+import {
+  useForm,
+  Controller,
+  type SubmitHandler,
+  useFieldArray,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { ColorResponseDto } from '@sneakers-store/contracts';
-import { startTransition, useActionState, useRef } from 'react';
+import { startTransition, useActionState, useEffect, useRef } from 'react';
+import { Delete } from '@mui/icons-material';
 
-import { createColor } from '../_api/color-server-fn';
-
-const schema = z.object({
-  name: z.string().min(1).trim(),
-  isActive: z.boolean(),
-  hex: z
-    .string()
-    .startsWith('#', 'Should start with #')
-    .regex(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
-    .trim(),
-});
+import { colorSchema, type ColorSchema } from '~/entities/color';
+import { createColor } from '../_api/color.server-fn';
 
 type ColorFormProps = {
   defaultValues?: ColorResponseDto;
@@ -31,31 +28,61 @@ type ColorFormProps = {
 
 function ColorForm({ id, defaultValues, actionType }: ColorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [, action, pending] = useActionState(createColor, undefined);
-  const { control, formState, handleSubmit } = useForm({
-    resolver: zodResolver(schema),
+  const [state, action, pending] = useActionState(createColor, undefined);
+  const {
+    control,
+    formState: { isDirty },
+    handleSubmit,
+    setError,
+  } = useForm({
+    resolver: zodResolver(colorSchema),
     defaultValues: defaultValues
-      ? defaultValues
+      ? {
+          ...defaultValues,
+          hexes: defaultValues.hex.map((v) => ({ hex: v })),
+        }
       : {
           name: '',
-          hex: '',
+          hexes: [{ hex: '#000000' }],
           isActive: false,
         },
   });
-  const { isDirty } = formState;
+  const { fields, append, remove } = useFieldArray({ control, name: 'hexes' });
 
-  const onSubmit = () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const fd = new FormData(formRef.current!);
+  const onSubmit: SubmitHandler<ColorSchema> = (data) => {
+    const dupFreeHexes: string[] = [];
+    data.hexes
+      .map((o) => o.hex)
+      .forEach((hex) => {
+        if (!dupFreeHexes.includes(hex)) dupFreeHexes.push(hex);
+      });
+    const hexes = dupFreeHexes.map((hex) => ({ hex }));
     startTransition(() => {
-      action(fd);
+      action(
+        actionType === 'edit'
+          ? { ...data, hexes, _action: 'edit', id: Number(id) }
+          : { ...data, hexes, _action: 'create' },
+      );
     });
   };
 
+  useEffect(() => {
+    if (!state?.success && state?.errors) {
+      (
+        Object.entries(state.errors) as [keyof typeof state.errors, string[]][]
+      ).forEach(([key, messages]) => {
+        if (Array.isArray(messages)) {
+          setError(key, {
+            type: 'custom',
+            message: messages[0],
+          });
+        }
+      });
+    }
+  }, [setError, state]);
+
   return (
     <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-      {actionType === 'edit' && <input name="id" type="hidden" value={id} />}
-      <input name="_action" type="hidden" value={actionType} />
       <FormGroup sx={{ gap: 5, maxWidth: '480px' }}>
         <Controller
           control={control}
@@ -70,21 +97,31 @@ function ColorForm({ id, defaultValues, actionType }: ColorFormProps) {
             />
           )}
         />
-        <Controller
-          control={control}
-          name="hex"
-          render={({ field, fieldState }) => (
-            <TextField
-              required
-              label="Hex"
-              placeholder="#000 or #000000"
-              type="color"
-              {...field}
-              error={fieldState.invalid}
-              helperText={fieldState.error?.message}
-            />
-          )}
-        />
+        {fields.map((item, index) => (
+          <Controller
+            key={item.id}
+            control={control}
+            name={`hexes.${index}.hex`}
+            render={({ field, fieldState }) => (
+              <div className="flex items-center space-x-3">
+                <TextField
+                  required
+                  label={`Hex #${index + 1}`}
+                  placeholder="#000000"
+                  type="color"
+                  {...field}
+                  error={fieldState.invalid}
+                  helperText={fieldState.error?.message}
+                  sx={{ width: '100%' }}
+                />
+                <IconButton onClick={() => remove(index)}>
+                  <Delete />
+                </IconButton>
+              </div>
+            )}
+          />
+        ))}
+        <Button onClick={() => append({ hex: '#000000' })}>Add hex</Button>
         <Controller
           control={control}
           name="isActive"

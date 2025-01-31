@@ -1,12 +1,20 @@
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsUUID,
   MinLength,
 } from 'class-validator';
-import { trim } from './custom-transformers.js';
+import { booleanString, trim } from './custom-transformers.js';
+
+export class BrandQueryDto {
+  @IsOptional()
+  @IsBoolean()
+  @Transform(booleanString)
+  active?: boolean;
+}
 
 export class BrandCreateDto {
   @Transform(trim)
@@ -23,8 +31,8 @@ export class BrandCreateDto {
 }
 
 export class BrandUpdateDto {
-  @IsUUID()
-  id: string;
+  @IsInt()
+  id: number;
 
   @Transform(trim)
   @IsNotEmpty()
@@ -40,7 +48,7 @@ export class BrandUpdateDto {
 }
 
 export class BrandResponseDto {
-  id: string;
+  id: number;
   name: string;
   iconUrl: string | null;
   isActive: boolean;

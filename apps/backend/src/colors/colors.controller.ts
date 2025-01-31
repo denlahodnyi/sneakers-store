@@ -6,9 +6,10 @@ import {
   HttpCode,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
@@ -16,8 +17,9 @@ import {
   contract as c,
   ColorCreateDto,
   ColorUpdateDto,
+  ColorQueryDto,
 } from '@sneakers-store/contracts';
-import { eq, type InferSelectModel } from 'drizzle-orm';
+import { and, eq, type InferSelectModel, type SQL } from 'drizzle-orm';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
@@ -25,6 +27,7 @@ import { colorsTable } from '../db/schemas/color.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../db/schemas/user.schema.js';
+import { INVALID_QUERY } from '../shared/constants.js';
 
 const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 
@@ -48,7 +51,7 @@ export class ColorsController {
 
   @Get(':colorId')
   @TsRestHandler(c.colors.getColorById)
-  getColor(@Param('colorId', ParseUUIDPipe) colorId: string) {
+  getColor(@Param('colorId', ParseIntPipe) colorId: number) {
     return tsRestHandler(c.colors.getColorById, async () => {
       const [color = null] = await this.drizzleService.db
         .select()
@@ -61,9 +64,20 @@ export class ColorsController {
 
   @Get()
   @TsRestHandler(c.colors.getColors)
-  getColors() {
+  getColors(
+    @Query(new ConfiguredValidationPipe({ errorMessage: INVALID_QUERY }))
+    query?: ColorQueryDto,
+  ) {
+    const { active } = query || {};
     return tsRestHandler(c.colors.getColors, async () => {
-      const colors = await this.drizzleService.db.select().from(colorsTable);
+      const filters: SQL[] = [];
+      if (active !== undefined) {
+        filters.push(eq(colorsTable.isActive, active));
+      }
+      const colors = await this.drizzleService.db
+        .select()
+        .from(colorsTable)
+        .where(and(...filters));
       return { status: 200, body: { status: 'success', data: { colors } } };
     });
   }
@@ -73,7 +87,7 @@ export class ColorsController {
   @Roles(adminRoles)
   @TsRestHandler(c.colors.updateColor)
   updateColor(
-    @Param('colorId', ParseUUIDPipe) colorId: string,
+    @Param('colorId', ParseIntPipe) colorId: number,
     @Body(ConfiguredValidationPipe) updateColorDto: ColorUpdateDto,
   ) {
     return tsRestHandler(c.colors.updateColor, async () => {
@@ -91,7 +105,7 @@ export class ColorsController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.colors.deleteColor)
-  deleteColor(@Param('colorId', ParseUUIDPipe) colorId: string) {
+  deleteColor(@Param('colorId', ParseIntPipe) colorId: number) {
     return tsRestHandler(c.colors.deleteColor, async () => {
       const [color = null] = await this.drizzleService.db
         .delete(colorsTable)
@@ -107,7 +121,7 @@ export class ColorsController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.colors.deleteColors)
-  deleteColors(@Body() { ids }: { ids: string[] }) {
+  deleteColors(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<
       PromiseSettledResult<T>,
       { status: 'rejected' }

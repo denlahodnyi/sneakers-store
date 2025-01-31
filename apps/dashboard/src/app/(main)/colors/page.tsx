@@ -22,11 +22,12 @@ import {
   TableToolbar,
   TableViewRecordLink,
 } from '~/shared/ui/page-blocks';
+import { getConicGradientFromHexes } from '~/shared/ui/styles';
 import {
   bulkDeleteColor,
   deleteColor,
   getColors,
-} from './_api/color-server-fn';
+} from './_api/color.server-fn';
 
 async function BrandsPage() {
   const { colors } = await getColors();
@@ -66,10 +67,14 @@ async function BrandsPage() {
                     <TableCell>
                       <div>
                         <span
-                          className="mr-2 inline-block min-h-[12px] min-w-[12px] rounded-full"
-                          style={{ backgroundColor: c.hex }}
+                          className="border-border mr-2 inline-block min-h-[12px] min-w-[12px] rounded-full border border-solid"
+                          style={{
+                            backgroundImage: getConicGradientFromHexes(c.hex),
+                          }}
                         />
-                        {c.hex}
+                        {c.hex.length > 1
+                          ? `${c.hex[0]} +${c.hex.length - 1}`
+                          : c.hex[0]}
                       </div>
                     </TableCell>
                     <TableCell>
