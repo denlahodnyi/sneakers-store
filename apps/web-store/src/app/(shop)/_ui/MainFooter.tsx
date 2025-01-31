@@ -11,13 +11,13 @@ function MainFooter() {
           <h2 className="mb-3 text-lg font-bold">Company</h2>
           <ul className="space-y-2">
             <li>
-              <Link href="#">About us</Link>
+              <Link href="/about-us">About us</Link>
             </li>
             <li>
-              <Link href="#">Stores</Link>
+              <Link href="/stores">Stores</Link>
             </li>
             <li>
-              <Link href="#">Contacts</Link>
+              <Link href="/contacts">Contacts</Link>
             </li>
           </ul>
         </section>
@@ -25,13 +25,13 @@ function MainFooter() {
           <h2 className="mb-3 text-lg font-bold">Support</h2>
           <ul className="space-y-2">
             <li>
-              <Link href="#">Help</Link>
+              <Link href="/help">Help</Link>
             </li>
             <li>
-              <Link href="#">Delivery</Link>
+              <Link href="/delivery">Delivery</Link>
             </li>
             <li>
-              <Link href="#">Returns & refunds</Link>
+              <Link href="/returns">Returns & refunds</Link>
             </li>
           </ul>
         </section>

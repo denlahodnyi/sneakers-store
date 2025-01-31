@@ -4,7 +4,7 @@
 
 body {
   font-family: var(--font-satoshi), Arial, Helvetica, sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   overscroll-behavior: none; /* Disables bounding effect */
 }
 
@@ -12,7 +12,7 @@ body {
   :root {
     --background: 0 0% 99%;
     --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
+    --card: 51, 23%, 88%;
     --card-foreground: 240 10% 3.9%;
     --footer: 192 19% 95%; /* TODO: add dark variant */
     --footer-foreground: 240 10% 3.9%;
@@ -20,11 +20,14 @@ body {
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    /* --secondary: 240 4.8% 95.9%; */
-    --secondary: 84.41% 0.1875 94.6;
+    --secondary: 45 24% 93%;
     --secondary-foreground: 240 5.9% 10%;
+    --tertiary: 84.41% 0.1875 94.6; /* OKLCH */ /* TODO: add dark */
+    --tertiary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
+    --muted-2: 0 0% 96%; /* TODO: add dark */
+    --muted-2-foreground: 0 0 65%;
     --accent: 240 4.8% 95.9%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;

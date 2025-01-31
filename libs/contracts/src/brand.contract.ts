@@ -3,6 +3,7 @@ import type {
   BrandCreateDto,
   BrandUpdateDto,
   BrandResponseDto,
+  BrandQueryDto,
 } from './dto/brand.dto.js';
 import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
@@ -27,7 +28,7 @@ const brandContract = c.router({
     method: 'GET',
     path: `${pathname}/${idSlug}`,
     summary: 'Get brand by id',
-    pathParams: c.type<{ brandId: string }>(),
+    pathParams: c.type<{ brandId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ brand: BrandResponseDto }>>(),
       404: c.type<ErrorResponseData>(),
@@ -37,6 +38,7 @@ const brandContract = c.router({
     method: 'GET',
     path: pathname,
     summary: 'Get all brands',
+    query: c.type<null | BrandQueryDto>(),
     responses: {
       200: c.type<SuccessResponseData<{ brands: BrandResponseDto[] }>>(),
     },
@@ -46,7 +48,7 @@ const brandContract = c.router({
     path: `${pathname}/${idSlug}`,
     summary: 'Update brand by id',
     body: c.type<BrandUpdateDto>(),
-    pathParams: c.type<{ brandId: string }>(),
+    pathParams: c.type<{ brandId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ brand: BrandResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -59,7 +61,7 @@ const brandContract = c.router({
     method: 'DELETE',
     path: `${pathname}/${idSlug}`,
     summary: 'Delete products brand by id',
-    pathParams: c.type<{ brandId: string }>(),
+    pathParams: c.type<{ brandId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ brand: BrandResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -72,7 +74,7 @@ const brandContract = c.router({
     method: 'POST',
     path: `${pathname}/command/bulkDelete`,
     summary: 'Delete multiple brands',
-    body: c.type<{ ids: string[] }>(),
+    body: c.type<{ ids: number[] }>(),
     responses: {
       200: c.type<SuccessResponseData<{ brands: BrandResponseDto[] }>>(),
       401: c.type<ErrorResponseData>(),

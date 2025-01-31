@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": ".",
+    },
+    {
+      "name": "be",
+      "path": "apps/backend",
+    },
+    {
+      "name": "fe/dashboard",
+      "path": "apps/dashboard",
+    },
+    {
+      "name": "fe/store",
+      "path": "apps/web-store",
+    },
+    {
+      "name": "lib/contracts",
+      "path": "libs/contracts",
+    },
+    {
+      "name": "lib/next-auth",
+      "path": "libs/next-auth",
+    },
+  ],
+  "settings": {},
+}

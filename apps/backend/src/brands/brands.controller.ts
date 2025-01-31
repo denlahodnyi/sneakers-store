@@ -6,9 +6,10 @@ import {
   HttpCode,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
@@ -16,8 +17,9 @@ import {
   contract as c,
   BrandCreateDto,
   BrandUpdateDto,
+  type BrandQueryDto,
 } from '@sneakers-store/contracts';
-import { eq, type InferSelectModel } from 'drizzle-orm';
+import { and, eq, type InferSelectModel, type SQL } from 'drizzle-orm';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
@@ -25,6 +27,7 @@ import { brandsTable } from '../db/schemas/brand.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../db/schemas/user.schema.js';
+import { INVALID_QUERY } from '../shared/constants.js';
 
 const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 
@@ -48,7 +51,7 @@ export class BrandsController {
 
   @Get(':brandId')
   @TsRestHandler(c.brands.getBrandById)
-  getBrand(@Param('brandId', ParseUUIDPipe) brandId: string) {
+  getBrand(@Param('brandId', ParseIntPipe) brandId: number) {
     return tsRestHandler(c.brands.getBrandById, async () => {
       const [brand = null] = await this.drizzleService.db
         .select()
@@ -61,9 +64,20 @@ export class BrandsController {
 
   @Get()
   @TsRestHandler(c.brands.getBrands)
-  getBrands() {
+  getBrands(
+    @Query(new ConfiguredValidationPipe({ errorMessage: INVALID_QUERY }))
+    query?: BrandQueryDto,
+  ) {
+    const { active } = query || {};
+    const filters: SQL[] = [];
+    if (active !== undefined) {
+      filters.push(eq(brandsTable.isActive, active));
+    }
     return tsRestHandler(c.brands.getBrands, async () => {
-      const brands = await this.drizzleService.db.select().from(brandsTable);
+      const brands = await this.drizzleService.db
+        .select()
+        .from(brandsTable)
+        .where(and(...filters));
       return { status: 200, body: { status: 'success', data: { brands } } };
     });
   }
@@ -73,7 +87,7 @@ export class BrandsController {
   @Roles(adminRoles)
   @TsRestHandler(c.brands.updateBrand)
   updateBrand(
-    @Param('brandId', ParseUUIDPipe) brandId: string,
+    @Param('brandId', ParseIntPipe) brandId: number,
     @Body(ConfiguredValidationPipe) updateBrandDto: BrandUpdateDto,
   ) {
     return tsRestHandler(c.brands.updateBrand, async () => {
@@ -91,7 +105,7 @@ export class BrandsController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.brands.deleteBrand)
-  deleteBrand(@Param('brandId', ParseUUIDPipe) brandId: string) {
+  deleteBrand(@Param('brandId', ParseIntPipe) brandId: number) {
     return tsRestHandler(c.brands.deleteBrand, async () => {
       const [brand = null] = await this.drizzleService.db
         .delete(brandsTable)
@@ -107,7 +121,7 @@ export class BrandsController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.brands.deleteBrands)
-  deleteBrands(@Body() { ids }: { ids: string[] }) {
+  deleteBrands(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<
       PromiseSettledResult<T>,
       { status: 'rejected' }

@@ -8,19 +8,13 @@ import {
   Switch,
   TextField,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CategoryResponseDto } from '@sneakers-store/contracts';
-import { startTransition, useActionState, useRef } from 'react';
+import { startTransition, useActionState, useEffect, useRef } from 'react';
 
+import { categorySchema, type CategorySchema } from '~/entities/category';
 import { createCategory } from '../_api/category-server-fn';
-
-const schema = z.object({
-  name: z.string().min(2),
-  isActive: z.boolean(),
-  parenId: z.string().optional(),
-});
 
 type CategoryFormProps = {
   defaultValues?: CategoryResponseDto;
@@ -34,31 +28,52 @@ function CategoryForm({
   categories,
 }: CategoryFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [, action, pending] = useActionState(createCategory, undefined);
-  const { control, formState, handleSubmit } = useForm({
-    resolver: zodResolver(schema),
+  const [state, action, pending] = useActionState(createCategory, undefined);
+  const { control, formState, handleSubmit, setError } = useForm({
+    resolver: zodResolver(categorySchema),
     defaultValues: defaultValues
-      ? { ...defaultValues, parentId: defaultValues.parentId || '' }
+      ? {
+          ...defaultValues,
+          parentId:
+            defaultValues.parentId ||
+            ('' as unknown as CategorySchema['parentId']),
+        }
       : {
           name: '',
+          slug: '',
           isActive: false,
-          parentId: '',
+          parentId: '' as unknown as CategorySchema['parentId'],
         },
   });
   const { isDirty } = formState;
 
-  const onSubmit = () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const fd = new FormData(formRef.current!);
+  const onSubmit: SubmitHandler<CategorySchema> = (data) => {
     startTransition(() => {
-      action(fd);
+      action(
+        actionType === 'edit'
+          ? { ...data, _action: 'edit', id: Number(id) }
+          : { ...data, _action: 'create' },
+      );
     });
   };
 
+  useEffect(() => {
+    if (!state?.success && state?.errors) {
+      (
+        Object.entries(state.errors) as [keyof typeof state.errors, string[]][]
+      ).forEach(([key, messages]) => {
+        if (Array.isArray(messages)) {
+          setError(key, {
+            type: 'custom',
+            message: messages[0],
+          });
+        }
+      });
+    }
+  }, [setError, state]);
+
   return (
     <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-      {actionType === 'edit' && <input name="id" type="hidden" value={id} />}
-      <input name="_action" type="hidden" value={actionType} />
       <FormGroup sx={{ gap: 5, maxWidth: '480px' }}>
         <Controller
           control={control}
@@ -67,6 +82,19 @@ function CategoryForm({
             <TextField
               required
               label="Name"
+              {...field}
+              error={fieldState.invalid}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="slug"
+          render={({ field, fieldState }) => (
+            <TextField
+              required
+              label="Slug"
               {...field}
               error={fieldState.invalid}
               helperText={fieldState.error?.message}
@@ -88,7 +116,7 @@ function CategoryForm({
               {categories.map((option) => (
                 <MenuItem
                   key={option.id}
-                  disabled={option.id === id}
+                  disabled={option.id === Number(id)}
                   value={option.id}
                 >
                   {option.name}

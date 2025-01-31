@@ -12,7 +12,7 @@ async function EditBrandPage({
   params: Promise<{ brandId: string }>;
 }) {
   const { brandId } = await params;
-  const { brand } = await getBrand(brandId);
+  const { brand } = await getBrand(Number(brandId));
 
   return (
     <PageContentContainer>

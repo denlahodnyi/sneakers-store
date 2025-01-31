@@ -13,8 +13,8 @@ import { deleteBrand, getBrand } from '../_api/brand-server-fn';
 
 async function BrandPage({ params }: { params: Promise<{ brandId: string }> }) {
   const { brandId } = await params;
-  const { brand } = await getBrand(brandId);
-  const deleteById = deleteBrand.bind(null, brandId);
+  const { brand } = await getBrand(Number(brandId));
+  const deleteById = deleteBrand.bind(null, Number(brandId));
 
   return (
     <PageContentContainer>

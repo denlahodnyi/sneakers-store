@@ -6,9 +6,10 @@ import {
   HttpCode,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
@@ -16,8 +17,15 @@ import {
   contract as c,
   CategoryCreateDto,
   CategoryUpdateDto,
+  CategoryQueryDto,
 } from '@sneakers-store/contracts';
-import { eq, getTableColumns, type InferSelectModel } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  getTableColumns,
+  type InferSelectModel,
+  type SQL,
+} from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
@@ -26,6 +34,7 @@ import { categoriesTable } from '../db/schemas/category.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../db/schemas/user.schema.js';
+import { INVALID_QUERY } from '../shared/constants.js';
 
 const parentTable = alias(categoriesTable, 'parent');
 const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
@@ -52,7 +61,7 @@ export class CategoriesController {
 
   @Get(':categoryId')
   @TsRestHandler(c.categories.getCategoryById)
-  getCategory(@Param('categoryId', ParseUUIDPipe) categoryId: string) {
+  getCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
     return tsRestHandler(c.categories.getCategoryById, async () => {
       const [category = null] = await this.drizzleService.db
         .select({ ...getTableColumns(categoriesTable), parent: parentTable })
@@ -66,11 +75,20 @@ export class CategoriesController {
 
   @Get()
   @TsRestHandler(c.categories.getCategories)
-  getCategories() {
+  getCategories(
+    @Query(new ConfiguredValidationPipe({ errorMessage: INVALID_QUERY }))
+    query?: CategoryQueryDto,
+  ) {
+    const { active } = query || {};
     return tsRestHandler(c.categories.getCategories, async () => {
+      const filters: SQL[] = [];
+      if (active !== undefined) {
+        filters.push(eq(categoriesTable.isActive, active));
+      }
       const categories = await this.drizzleService.db
         .select({ ...getTableColumns(categoriesTable), parent: parentTable })
         .from(categoriesTable)
+        .where(and(...filters))
         .leftJoin(parentTable, eq(parentTable.id, categoriesTable.parentId)); // TODO: do i need this?
       return { status: 200, body: { status: 'success', data: { categories } } };
     });
@@ -81,7 +99,7 @@ export class CategoriesController {
   @Roles(adminRoles)
   @TsRestHandler(c.categories.updateCategory)
   updateCategory(
-    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
     @Body(ConfiguredValidationPipe) updateCategoryDto: CategoryUpdateDto,
   ) {
     return tsRestHandler(c.categories.updateCategory, async () => {
@@ -99,7 +117,7 @@ export class CategoriesController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.categories.deleteCategory)
-  deleteCategory(@Param('categoryId', ParseUUIDPipe) categoryId: string) {
+  deleteCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
     return tsRestHandler(c.categories.deleteCategory, async () => {
       const [category = null] = await this.drizzleService.db
         .delete(categoriesTable)
@@ -115,7 +133,7 @@ export class CategoriesController {
   @UseGuards(AuthGuard)
   @Roles(adminRoles)
   @TsRestHandler(c.categories.deleteCategories)
-  deleteCategories(@Body() { ids }: { ids: string[] }) {
+  deleteCategories(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<
       PromiseSettledResult<T>,
       { status: 'rejected' }

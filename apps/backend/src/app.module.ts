@@ -10,6 +10,13 @@ import { HttpExceptionFilter } from './shared/filters/http-exception.filter.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { BrandsModule } from './brands/brands.module.js';
 import { ColorsModule } from './colors/colors.module.js';
+import { ProductsModule } from './products/products.module.js';
+import { SizesModule } from './sizes/sizes.module.js';
+import { ProductVariantsModule } from './product-variants/product-variants.module.js';
+import { ProductSkusModule } from './product-skus/product-skus.module.js';
+import { CatalogModule } from './catalog/catalog.module.js';
+import { ProductImagesModule } from './product-images/product-images.module.js';
+import { DiscountsModule } from './discounts/discounts.module.js';
 
 const prodEnvs = ['.env.production.local', '.env.production', '.env'];
 const devEnvs = ['.env.development.local', '.env.development', '.env'];
@@ -39,6 +46,13 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
     CategoriesModule,
     BrandsModule,
     ColorsModule,
+    ProductsModule,
+    SizesModule,
+    ProductVariantsModule,
+    ProductSkusModule,
+    CatalogModule,
+    ProductImagesModule,
+    DiscountsModule,
   ],
   exports: [],
   controllers: [AppController],

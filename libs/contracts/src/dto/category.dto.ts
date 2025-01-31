@@ -1,22 +1,37 @@
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
-  IsUUID,
+  MaxLength,
   MinLength,
 } from 'class-validator';
-import { trim } from './custom-transformers.js';
+import { booleanString, trim } from './custom-transformers.js';
+
+export class CategoryQueryDto {
+  @IsOptional()
+  @IsBoolean()
+  @Transform(booleanString)
+  active?: boolean;
+}
 
 export class CategoryCreateDto {
   @Transform(trim)
   @IsNotEmpty()
   @MinLength(1)
+  @MaxLength(50)
   name: string;
 
+  @Transform(trim)
+  @IsNotEmpty()
+  @MinLength(1)
+  @MaxLength(100)
+  slug: string;
+
   @IsOptional()
-  @IsUUID()
-  parentId?: string | null;
+  @IsInt()
+  parentId?: number | null;
 
   @IsOptional()
   @IsBoolean()
@@ -24,26 +39,33 @@ export class CategoryCreateDto {
 }
 
 export class CategoryUpdateDto {
-  @IsUUID()
-  id: string;
+  @IsInt()
+  id: number;
 
   @Transform(trim)
   @IsNotEmpty()
   @MinLength(1)
-  name?: string;
+  name?: CategoryCreateDto['name'];
+
+  @Transform(trim)
+  @IsNotEmpty()
+  @MinLength(1)
+  @MaxLength(100)
+  slug?: CategoryCreateDto['slug'];
 
   @IsOptional()
-  @IsUUID()
-  parentId?: string | null;
+  @IsInt()
+  parentId?: CategoryCreateDto['parentId'];
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  isActive?: CategoryCreateDto['isActive'];
 }
 
 export class CategoryResponseDto {
-  id: string;
+  id: number;
   name: string;
-  parentId: string | null;
+  slug: string;
+  parentId: number | null;
   isActive: boolean;
 }

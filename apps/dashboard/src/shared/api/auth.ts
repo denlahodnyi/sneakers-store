@@ -1,7 +1,7 @@
 import NextAuth, { AuthError } from 'next-auth';
 import { getNextAuthConfig } from '@sneakers-store/next-auth';
 
-import { getClient } from './contractsClient';
+import { getClient } from './serverContractsClient';
 
 const client = getClient();
 

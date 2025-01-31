@@ -1,12 +1,62 @@
 [
   {
-    "name": "White",
-    "hex": "#FFF",
+    "id": 1,
+    "name": "Multi-coloured",
+    "hex": ["#ffca4f", "#4fffa7", "#4f61ff", "#ff4fe2"],
     "is_active": true
   },
   {
+    "id": 2,
+    "name": "White",
+    "hex": ["#FFFFFF"],
+    "is_active": true
+  },
+  {
+    "id": 3,
     "name": "Black",
-    "hex": "#000",
+    "hex": ["#000000"],
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "name": "Red",
+    "hex": ["#FF0000"],
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "name": "Blue",
+    "hex": ["#0000FF"],
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "name": "Green",
+    "hex": ["#00FF00"],
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "name": "Yellow",
+    "hex": ["#ffdd00"],
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "name": "Orange",
+    "hex": ["#ff9900"],
+    "is_active": true
+  },
+  {
+    "id": 9,
+    "name": "Grey",
+    "hex": ["#adadad"],
+    "is_active": true
+  },
+  {
+    "id": 10,
+    "name": "Beige",
+    "hex": ["#f7debc"],
     "is_active": true
   }
 ]

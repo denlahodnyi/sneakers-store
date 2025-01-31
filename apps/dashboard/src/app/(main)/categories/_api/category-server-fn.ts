@@ -3,22 +3,25 @@
 import type {
   CategoryCreateDto,
   CategoryUpdateDto,
+  Contract,
+  inferDtoErrors,
 } from '@sneakers-store/contracts';
+import type { ClientInferRequest } from '@ts-rest/core';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import type { CategorySchema } from '~/entities/category';
 import { getClient } from '~/shared/api';
 
 const client = getClient();
 const redirectTo = '/categories';
 
-type ParsedFormData =
-  | ({ _action: 'create' } & CategoryCreateDto)
-  | ({ _action: 'edit' } & CategoryUpdateDto);
+type Data =
+  | ({ _action: 'create' } & CategorySchema)
+  | ({ _action: 'edit'; id: number } & CategorySchema);
 
-export async function createCategory(prev: unknown, formData: FormData) {
-  const data = Object.fromEntries(formData) as unknown as ParsedFormData;
+export async function createCategory(prev: unknown, data: Data) {
   const cookie = await cookies();
 
   if (data._action === 'create') {
@@ -26,11 +29,7 @@ export async function createCategory(prev: unknown, formData: FormData) {
       extraHeaders: {
         Cookie: cookie.toString(),
       },
-      body: {
-        ...data,
-        parentId: data.parentId || null,
-        isActive: formData.get('isActive') === 'true',
-      },
+      body: data,
     });
 
     if (body.status === 'success') {
@@ -39,7 +38,7 @@ export async function createCategory(prev: unknown, formData: FormData) {
     } else if (body.errors) {
       return {
         success: false,
-        errors: body.errors,
+        errors: body.errors as inferDtoErrors<CategoryCreateDto>,
         _ts: Date.now().valueOf(),
       };
     } else {
@@ -55,12 +54,7 @@ export async function createCategory(prev: unknown, formData: FormData) {
         Cookie: cookie.toString(),
       },
       params: { categoryId },
-      body: {
-        ...data,
-        parentId: data.parentId || null,
-        isActive: formData.get('isActive') === 'true',
-        id: categoryId,
-      },
+      body: data,
     });
 
     if (body.status === 'success') {
@@ -69,7 +63,7 @@ export async function createCategory(prev: unknown, formData: FormData) {
     } else if (body.errors) {
       return {
         success: false,
-        errors: body.errors,
+        errors: body.errors as inferDtoErrors<CategoryUpdateDto>,
         _ts: Date.now().valueOf(),
       };
     } else {
@@ -80,12 +74,16 @@ export async function createCategory(prev: unknown, formData: FormData) {
   }
 }
 
-export async function getCategories() {
-  const { body } = await client.categories.getCategories();
+export async function getCategories(
+  query?: ClientInferRequest<Contract['categories']['getCategories']>['query'],
+) {
+  const { body } = await client.categories.getCategories({
+    query: query || null,
+  });
   return body.data;
 }
 
-export async function getCategory(categoryId: string) {
+export async function getCategory(categoryId: number) {
   const { body } = await client.categories.getCategoryById({
     params: { categoryId },
   });
@@ -93,7 +91,7 @@ export async function getCategory(categoryId: string) {
   else throw new Error(body.message || 'Cannot get category', { cause: body });
 }
 
-export async function deleteCategory(categoryId: string) {
+export async function deleteCategory(categoryId: number) {
   const cookie = await cookies();
   const { body } = await client.categories.deleteCategory({
     extraHeaders: { Cookie: cookie.toString() },
@@ -107,7 +105,7 @@ export async function deleteCategory(categoryId: string) {
   }
 }
 
-export async function bulkDeleteCategory(ids: string[]) {
+export async function bulkDeleteCategory(ids: number[]) {
   const cookie = await cookies();
   const { body } = await client.categories.deleteCategories({
     extraHeaders: { Cookie: cookie.toString() },

@@ -3,6 +3,7 @@ import type {
   ColorCreateDto,
   ColorUpdateDto,
   ColorResponseDto,
+  ColorQueryDto,
 } from './dto/color.dto.js';
 import type { ErrorResponseData, SuccessResponseData } from './dto/misc.js';
 
@@ -27,7 +28,7 @@ const colorContract = c.router({
     method: 'GET',
     path: `${pathname}/${idSlug}`,
     summary: 'Get color by id',
-    pathParams: c.type<{ colorId: string }>(),
+    pathParams: c.type<{ colorId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ color: ColorResponseDto }>>(),
       404: c.type<ErrorResponseData>(),
@@ -37,6 +38,7 @@ const colorContract = c.router({
     method: 'GET',
     path: pathname,
     summary: 'Get all colors',
+    query: c.type<null | ColorQueryDto>(),
     responses: {
       200: c.type<SuccessResponseData<{ colors: ColorResponseDto[] }>>(),
     },
@@ -46,7 +48,7 @@ const colorContract = c.router({
     path: `${pathname}/${idSlug}`,
     summary: 'Update color by id',
     body: c.type<ColorUpdateDto>(),
-    pathParams: c.type<{ colorId: string }>(),
+    pathParams: c.type<{ colorId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ color: ColorResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -59,7 +61,7 @@ const colorContract = c.router({
     method: 'DELETE',
     path: `${pathname}/${idSlug}`,
     summary: 'Delete color by id',
-    pathParams: c.type<{ colorId: string }>(),
+    pathParams: c.type<{ colorId: number }>(),
     responses: {
       200: c.type<SuccessResponseData<{ color: ColorResponseDto }>>(),
       400: c.type<ErrorResponseData>(),
@@ -72,7 +74,7 @@ const colorContract = c.router({
     method: 'POST',
     path: `${pathname}/command/bulkDelete`,
     summary: 'Delete multiple colors',
-    body: c.type<{ ids: string[] }>(),
+    body: c.type<{ ids: number[] }>(),
     responses: {
       200: c.type<SuccessResponseData<{ colors: ColorResponseDto[] }>>(),
       401: c.type<ErrorResponseData>(),

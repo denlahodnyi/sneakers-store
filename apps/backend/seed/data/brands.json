@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "name": "Adidas",
+    "icon_url": "https://cdn.simpleicons.org/adidas",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "name": "Nike",
+    "icon_url": "https://cdn.simpleicons.org/nike",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "name": "Puma",
+    "icon_url": "https://cdn.simpleicons.org/puma",
+    "is_active": true
+  },
+  {
+    "id": 4,
+    "name": "Under Armour",
+    "icon_url": "https://cdn.simpleicons.org/underarmour",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "name": "New Balance",
+    "icon_url": "https://cdn.simpleicons.org/newbalance/black",
+    "is_active": true
+  },
+  {
+    "id": 6,
+    "name": "Diesel",
+    "icon_url": null,
+    "is_active": true
+  },
+  {
+    "id": 7,
+    "name": "Tommy Hilfiger",
+    "icon_url": null,
+    "is_active": true
+  },
+  {
+    "id": 8,
+    "name": "Tommy Jeans",
+    "icon_url": null,
+    "is_active": true
+  },
+  {
+    "id": 9,
+    "name": "Polo Ralph Lauren",
+    "icon_url": null,
+    "is_active": true
+  }
+]

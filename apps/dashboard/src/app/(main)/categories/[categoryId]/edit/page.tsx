@@ -13,8 +13,8 @@ async function EditCategoryPage({
 }) {
   const { categoryId } = await params;
   const [{ category }, { categories }] = await Promise.all([
-    getCategory(categoryId),
-    getCategories(),
+    getCategory(Number(categoryId)),
+    getCategories({ active: true }),
   ]);
 
   return (

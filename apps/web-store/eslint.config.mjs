@@ -136,6 +136,9 @@ export default tseslint.config(
       '@stylistic/operator-linebreak': ['off'], // conflicts with Prettier
       '@stylistic/arrow-parens': ['off'], // conflicts with Prettier
       '@stylistic/multiline-ternary': ['off'],
+      '@stylistic/jsx-curly-newline': ['off'], // conflicts with Prettier
+      '@stylistic/jsx-one-expression-per-line': ['off'], // conflicts with Prettier
+      '@stylistic/quotes': ['on', { avoidEscape: true }],
     },
   },
   eslintPluginPrettierRecommended,

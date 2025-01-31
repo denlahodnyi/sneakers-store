@@ -9,7 +9,7 @@ function ContentContainer({
   return (
     <div
       className={cn(
-        'max-w-screen-3xl mx-auto px-3 py-3 sm:px-10 sm:py-5',
+        'mx-auto max-w-screen-3xl px-3 py-3 sm:px-10 sm:py-5',
         className,
       )}
     >
