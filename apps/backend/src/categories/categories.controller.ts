@@ -33,11 +33,10 @@ import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.
 import { categoriesTable } from '../db/schemas/category.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 const parentTable = alias(categoriesTable, 'parent');
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 
 @Controller('categories')
 export class CategoriesController {
@@ -45,7 +44,7 @@ export class CategoriesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.categories.createCategory)
   createCategory(
     @Body(ConfiguredValidationPipe) createCategoryDto: CategoryCreateDto,
@@ -96,7 +95,7 @@ export class CategoriesController {
 
   @Patch(':categoryId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.categories.updateCategory)
   updateCategory(
     @Param('categoryId', ParseIntPipe) categoryId: number,
@@ -115,7 +114,7 @@ export class CategoriesController {
 
   @Delete(':categoryId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.categories.deleteCategory)
   deleteCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
     return tsRestHandler(c.categories.deleteCategory, async () => {
@@ -131,7 +130,7 @@ export class CategoriesController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.categories.deleteCategories)
   deleteCategories(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<

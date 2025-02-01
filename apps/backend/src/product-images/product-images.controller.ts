@@ -23,9 +23,7 @@ import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.
 import { productImagesTable } from '../db/schemas/product.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
-
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 @Controller('product-images')
 export class ProductImagesController {
@@ -33,7 +31,7 @@ export class ProductImagesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productImages.createProductImg)
   createProductImg(
     @Body(ConfiguredValidationPipe)
@@ -90,7 +88,7 @@ export class ProductImagesController {
 
   @Patch(':productImageId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productImages.updateProductImage)
   updateProductSku(
     @Param('productImageId', ParseUUIDPipe) productImageId: string,
@@ -113,7 +111,7 @@ export class ProductImagesController {
 
   @Delete(':productImageId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productImages.deleteProductImage)
   deleteProductImg(
     @Param('productImageId', ParseUUIDPipe) productImageId: string,

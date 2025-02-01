@@ -7,11 +7,12 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { Reflector } from '@nestjs/core';
+import type { Role } from '@sneakers-store/contracts';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { getSession } from '../shared/libs/next-auth/getSession.js';
 import { IS_PUBLIC_KEY } from './public.decorator.js';
-import type { Role, UserEntity } from '../db/schemas/user.schema.js';
+import type { UserEntity } from '../db/schemas/user.schema.js';
 import {
   IS_AUTH_CONDITION_KEY,
   type ConditionsHandler,

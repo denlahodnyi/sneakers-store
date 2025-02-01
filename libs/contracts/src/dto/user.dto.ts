@@ -11,6 +11,7 @@ import {
   IsBoolean,
   IsDateString,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsUUID,
@@ -18,6 +19,24 @@ import {
   MinLength,
 } from 'class-validator';
 import { trim } from './custom-transformers.js';
+import { QueryWithPagination } from './misc.js';
+
+export const Role = {
+  SUPER_ADMIN: 'super_admin',
+  ADMIN: 'admin',
+} as const;
+
+export type Role = (typeof Role)[keyof typeof Role];
+
+export class UserQueryDto extends QueryWithPagination {
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+  @IsOptional()
+  providerAccountId?: string;
+  @IsOptional()
+  provider?: string;
+}
 
 export class UserCreateDto {
   @IsOptional()
@@ -41,6 +60,10 @@ export class UserCreateDto {
   @MaxLength(10)
   @IsAlphanumeric()
   password?: string;
+
+  @IsOptional()
+  @IsEnum(Role)
+  role?: Role | null;
 }
 
 export class UserUpdateDto {
@@ -69,6 +92,10 @@ export class UserUpdateDto {
   @MaxLength(10)
   @IsAlphanumeric()
   password?: string | null;
+
+  @IsOptional()
+  @IsEnum(Role)
+  role?: Role | null;
 }
 
 export class UserSignInDto {

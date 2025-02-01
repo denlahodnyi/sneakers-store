@@ -26,10 +26,8 @@ import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.
 import { sizesTable } from '../db/schemas/size.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
-
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 @Controller('sizes')
 export class SizesController {
@@ -37,7 +35,7 @@ export class SizesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.sizes.createSize)
   createSize(@Body(ConfiguredValidationPipe) createSizeDto: SizeCreateDto) {
     return tsRestHandler(c.sizes.createSize, async () => {
@@ -84,7 +82,7 @@ export class SizesController {
 
   @Patch(':sizeId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.sizes.updateSize)
   updateSize(
     @Param('sizeId', ParseIntPipe) sizeId: number,
@@ -103,7 +101,7 @@ export class SizesController {
 
   @Delete(':sizeId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.sizes.deleteSize)
   deleteSize(@Param('sizeId', ParseIntPipe) sizeId: number) {
     return tsRestHandler(c.sizes.deleteSize, async () => {
@@ -119,7 +117,7 @@ export class SizesController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.sizes.deleteSizes)
   deleteSizes(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<

@@ -26,10 +26,8 @@ import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.
 import { colorsTable } from '../db/schemas/color.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
-
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 @Controller('colors')
 export class ColorsController {
@@ -37,7 +35,7 @@ export class ColorsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.colors.createColor)
   createColor(@Body(ConfiguredValidationPipe) createColorDto: ColorCreateDto) {
     return tsRestHandler(c.colors.createColor, async () => {
@@ -84,7 +82,7 @@ export class ColorsController {
 
   @Patch(':colorId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.colors.updateColor)
   updateColor(
     @Param('colorId', ParseIntPipe) colorId: number,
@@ -103,7 +101,7 @@ export class ColorsController {
 
   @Delete(':colorId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.colors.deleteColor)
   deleteColor(@Param('colorId', ParseIntPipe) colorId: number) {
     return tsRestHandler(c.colors.deleteColor, async () => {
@@ -119,7 +117,7 @@ export class ColorsController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.colors.deleteColors)
   deleteColors(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<

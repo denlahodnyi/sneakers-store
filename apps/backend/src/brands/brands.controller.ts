@@ -26,10 +26,8 @@ import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.
 import { brandsTable } from '../db/schemas/brand.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
-
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 @Controller('brands')
 export class BrandsController {
@@ -37,7 +35,7 @@ export class BrandsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.brands.createBrand)
   createBrand(@Body(ConfiguredValidationPipe) createBrandDto: BrandCreateDto) {
     return tsRestHandler(c.brands.createBrand, async () => {
@@ -84,7 +82,7 @@ export class BrandsController {
 
   @Patch(':brandId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.brands.updateBrand)
   updateBrand(
     @Param('brandId', ParseIntPipe) brandId: number,
@@ -103,7 +101,7 @@ export class BrandsController {
 
   @Delete(':brandId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.brands.deleteBrand)
   deleteBrand(@Param('brandId', ParseIntPipe) brandId: number) {
     return tsRestHandler(c.brands.deleteBrand, async () => {
@@ -119,7 +117,7 @@ export class BrandsController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.brands.deleteBrands)
   deleteBrands(@Body() { ids }: { ids: number[] }) {
     type FulfilledAllSettled<T> = Exclude<

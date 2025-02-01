@@ -138,10 +138,7 @@ export default tseslint.config(
       '@stylistic/multiline-ternary': ['off'], // conflicts with Prettier
       '@stylistic/jsx-wrap-multilines': ['off'], // conflicts with Prettier
       '@stylistic/jsx-closing-tag-location': ['off'], // conflicts with Prettier
-      '@stylistic/jsx-one-expression-per-line': [
-        'error',
-        { allow: ['single-line', 'non-jsx'] },
-      ],
+      // '@stylistic/jsx-one-expression-per-line': ['error', { allow: 'non-jsx' }],
     },
   },
   eslintPluginPrettierRecommended,
