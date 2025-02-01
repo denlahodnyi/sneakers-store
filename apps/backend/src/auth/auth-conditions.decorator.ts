@@ -1,6 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
+import type { Role } from '@sneakers-store/contracts';
 
-import { type Role, type UserEntity } from '../db/schemas/user.schema.js';
+import { type UserEntity } from '../db/schemas/user.schema.js';
 
 export interface ConditionObject {
   params?: Record<string, any>;

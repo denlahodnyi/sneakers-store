@@ -14,7 +14,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { and, eq, getTableColumns } from 'drizzle-orm';
+import { and, eq, getTableColumns, sql, type SQL } from 'drizzle-orm';
 import * as bcrypt from 'bcrypt';
 import { instanceToPlain } from 'class-transformer';
 import {
@@ -22,20 +22,26 @@ import {
   UserCreateDto,
   UserUpdateDto,
   contract as c,
+  UserQueryDto,
 } from '@sneakers-store/contracts';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
-import { accountsTable, Role, usersTable } from '../db/schemas/user.schema.js';
+import {
+  accountsTable,
+  ADMIN_ROLES,
+  usersTable,
+} from '../db/schemas/user.schema.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { AuthConditions } from '../auth/auth-conditions.decorator.js';
+import createPaginationDto from '../shared/libs/pagination/createPaginationDto.js';
 
 const SALT_ROUNDS = 10;
+const LIMIT = 10;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { password, ...omitPassword } = getTableColumns(usersTable);
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 
 @Controller('users')
 export class UsersController {
@@ -75,7 +81,7 @@ export class UsersController {
           'The user with the provided email is not found',
         );
       }
-      if (signInDto.asAdmin && !adminRoles.includes(user.role as string)) {
+      if (signInDto.asAdmin && !ADMIN_ROLES.includes(user.role as string)) {
         throw new ForbiddenException('Sorry, you have no access rights');
       }
       if (!user.password) {
@@ -101,7 +107,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: adminRoles },
+    { roles: ADMIN_ROLES },
   ])
   @TsRestHandler(c.users.getUser)
   async getUser(@Param('userId', ParseUUIDPipe) userId: string) {
@@ -118,7 +124,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: adminRoles },
+    { roles: ADMIN_ROLES },
   ])
   @TsRestHandler(c.users.updateUser)
   async updateUser(
@@ -141,25 +147,31 @@ export class UsersController {
   }
 
   @Get()
-  @TsRestHandler(c.users.getUserByAccountOrEmail)
-  async getUserByAccountOrEmail(
-    @Query('providerAccountId') providerAccountId: string,
-    @Query('provider') provider: string,
-    @Query('email') email: string,
-  ) {
-    return tsRestHandler(c.users.getUserByAccountOrEmail, async () => {
+  @TsRestHandler(c.users.getUsers)
+  async getUsers(@Query(ConfiguredValidationPipe) query: UserQueryDto) {
+    return tsRestHandler(c.users.getUsers, async () => {
+      const { email, provider, providerAccountId, perPage = LIMIT } = query;
+      const page = query.page || 1;
+      const filters: SQL[] = [];
+
       if (email) {
-        const [user = null] = await this.drizzleService.db
-          .select(omitPassword)
-          .from(usersTable)
-          .where(eq(usersTable.email, email));
-        return { status: 200, body: { status: 'success', data: { user } } };
+        filters.push(eq(usersTable.email, email));
       }
+
+      let usersQuery = this.drizzleService.db
+        .select({
+          ...omitPassword,
+          total: sql<number>`COUNT(*) OVER()`.mapWith(Number).as('total'),
+        })
+        .from(usersTable)
+        .where(and(...filters))
+        .offset((page - 1) * perPage)
+        .limit(perPage)
+        .$dynamic();
+
       if (provider && providerAccountId) {
         // https://github.com/nextauthjs/next-auth/issues/8377#issuecomment-1704299629
-        const [user = null] = await this.drizzleService.db
-          .select(omitPassword)
-          .from(usersTable)
+        usersQuery = usersQuery
           .leftJoin(accountsTable, eq(usersTable.id, accountsTable.userId))
           .where(
             and(
@@ -167,9 +179,22 @@ export class UsersController {
               eq(accountsTable.providerAccountId, providerAccountId),
             ),
           );
-        return { status: 200, body: { status: 'success', data: { user } } };
       }
-      return { status: 200, body: { status: 'success', data: { user: null } } };
+      const users = await usersQuery;
+      return {
+        status: 200,
+        body: {
+          status: 'success',
+          data: {
+            users,
+            pagination: createPaginationDto({
+              total: users[0]?.total || 0,
+              page,
+              perPage,
+            }),
+          },
+        },
+      };
     });
   }
 
@@ -177,7 +202,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @AuthConditions((user) => [
     { params: { userId: user.id } },
-    { roles: adminRoles },
+    { roles: ADMIN_ROLES },
   ])
   @TsRestHandler(c.users.deleteUser)
   async deleteUser(@Param('userId', new ParseUUIDPipe()) userId: string) {

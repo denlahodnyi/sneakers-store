@@ -1,16 +1,14 @@
+import { Role } from '@sneakers-store/contracts';
 import type { InferSelectModel } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 import type { AdapterAccountType } from 'next-auth/adapters';
 
+import { timestamps } from './columns.utils.js';
+
 export type UserEntity = InferSelectModel<typeof usersTable>;
 export type SessionEntity = InferSelectModel<typeof sessionsTable>;
 
-export const Role = {
-  SUPER_ADMIN: 'super_admin',
-  ADMIN: 'admin',
-} as const;
-
-export type Role = (typeof Role)[keyof typeof Role];
+export const ADMIN_ROLES = [Role.SUPER_ADMIN, Role.ADMIN];
 
 export const rolesEnum = t.pgEnum('role', [Role.SUPER_ADMIN, Role.ADMIN]);
 
@@ -25,6 +23,7 @@ export const usersTable = t.pgTable('users', {
   image: t.text(),
   password: t.varchar({ length: 255 }),
   role: rolesEnum(),
+  ...timestamps,
 });
 
 export const accountsTable = t.pgTable(
@@ -44,6 +43,7 @@ export const accountsTable = t.pgTable(
     scope: t.text(),
     id_token: t.text(),
     session_state: t.text(),
+    ...timestamps,
   },
   (account) => [
     t.primaryKey({

@@ -19,6 +19,7 @@ import {
   ProductSkuUpdateDto,
   ProductSkuQueryDto,
   PRICE_MINOR_UNITS,
+  Role,
 } from '@sneakers-store/contracts';
 import {
   and,
@@ -39,7 +40,6 @@ import {
 } from '../db/schemas/product.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { categoriesTable } from '../db/schemas/category.schema.js';
 import { brandsTable } from '../db/schemas/brand.schema.js';
 import { colorsTable } from '../db/schemas/color.schema.js';

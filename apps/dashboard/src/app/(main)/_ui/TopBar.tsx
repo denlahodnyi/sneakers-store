@@ -9,6 +9,7 @@ import {
   LogoutOutlined,
   MenuOutlined,
   Palette,
+  People,
   StraightenOutlined,
 } from '@mui/icons-material';
 import {
@@ -34,6 +35,11 @@ const links = [
     href: '/',
     label: 'Home',
     icon: <HomeOutlined />,
+  },
+  {
+    href: '/users',
+    label: 'Users',
+    icon: <People />,
   },
   {
     href: '/products',

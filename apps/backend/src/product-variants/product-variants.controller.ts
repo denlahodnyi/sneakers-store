@@ -38,12 +38,11 @@ import {
 } from '../db/schemas/product.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { colorsTable } from '../db/schemas/color.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
 import createPaginationDto from '../shared/libs/pagination/createPaginationDto.js';
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 const LIMIT = 10;
 
 @Controller('product-vars')
@@ -52,7 +51,7 @@ export class ProductVariantsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productVariants.createProductVariant)
   createProductVariant(
     @Body(ConfiguredValidationPipe)
@@ -201,7 +200,7 @@ export class ProductVariantsController {
 
   @Patch(':productVarId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productVariants.updateProductVariant)
   updateProductVariant(
     @Param('productVarId', ParseUUIDPipe) productVarId: string,
@@ -231,7 +230,7 @@ export class ProductVariantsController {
 
   @Delete(':productVarId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productVariants.deleteProductVariant)
   deleteProductVariant(
     @Param('productVarId', ParseUUIDPipe) productVarId: string,
@@ -255,7 +254,7 @@ export class ProductVariantsController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.productVariants.deleteProductVariants)
   deleteProductVariants(@Body() { ids }: { ids: string[] }) {
     type FulfilledAllSettled<T> = Exclude<

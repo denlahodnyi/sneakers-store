@@ -25,12 +25,10 @@ import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { discountsTable } from '../db/schemas/discounts.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
 import { formattedPrice } from '../shared/sql/templates.js';
-
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 const selection = {
   ...getTableColumns(discountsTable),
@@ -49,7 +47,7 @@ export class DiscountsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.discount.createDiscount)
   createDiscount(
     @Body(ConfiguredValidationPipe) createDiscountDto: DiscountCreateDto,
@@ -118,7 +116,7 @@ export class DiscountsController {
 
   @Patch(':discountId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.discount.updateDiscount)
   updateDiscount(
     @Param('discountId', ParseUUIDPipe) discountId: string,
@@ -149,7 +147,7 @@ export class DiscountsController {
 
   @Delete(':discountId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.discount.deleteDiscount)
   deleteDiscount(@Param('discountId', ParseUUIDPipe) discountId: string) {
     return tsRestHandler(c.discount.deleteDiscount, async () => {

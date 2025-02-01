@@ -41,7 +41,6 @@ import {
 } from '../db/schemas/product.schema.js';
 import { AuthGuard } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { Role } from '../db/schemas/user.schema.js';
 import { categoriesTable } from '../db/schemas/category.schema.js';
 import { brandsTable } from '../db/schemas/brand.schema.js';
 import { colorsTable } from '../db/schemas/color.schema.js';
@@ -51,8 +50,8 @@ import createPaginationDto from '../shared/libs/pagination/createPaginationDto.j
 import { discountsTable } from '../db/schemas/discounts.schema.js';
 import { formattedPrice } from '../shared/sql/templates.js';
 import { sizesTable } from '../db/schemas/size.schema.js';
+import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
-const adminRoles = [Role.SUPER_ADMIN, Role.ADMIN];
 const LIMIT = 10;
 
 @Controller('products')
@@ -61,7 +60,7 @@ export class ProductsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.products.createProduct)
   createProduct(
     @Body(ConfiguredValidationPipe) createProductDto: ProductCreateDto,
@@ -246,7 +245,7 @@ export class ProductsController {
 
   @Patch(':productId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.products.updateProduct)
   updateProduct(
     @Param('productId', ParseUUIDPipe) productId: string,
@@ -345,7 +344,7 @@ export class ProductsController {
 
   @Delete(':productId')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.products.deleteProduct)
   deleteProduct(@Param('productId', ParseUUIDPipe) productId: string) {
     return tsRestHandler(c.products.deleteProduct, async () => {
@@ -361,7 +360,7 @@ export class ProductsController {
   @HttpCode(200)
   @Post('command/bulkDelete')
   @UseGuards(AuthGuard)
-  @Roles(adminRoles)
+  @Roles(ADMIN_ROLES)
   @TsRestHandler(c.products.deleteProducts)
   deleteProducts(@Body() { ids }: { ids: string[] }) {
     type FulfilledAllSettled<T> = Exclude<
