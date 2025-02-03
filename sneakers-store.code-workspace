@@ -25,5 +25,9 @@
       "path": "libs/next-auth",
     },
   ],
-  "settings": {},
+  "settings": {
+    "search.exclude": {
+      "**/dist": true,
+    },
+  },
 }

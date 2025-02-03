@@ -1,7 +1,7 @@
 import { DiscountType, PRICE_MINOR_UNITS } from '@sneakers-store/contracts';
 import { sql, type Column, type SQL } from 'drizzle-orm';
 
-export const formattedPrice = (column: Column) =>
+export const formattedPrice = (column: Column | SQL) =>
   // Truncate zeros after decimal point (450 instead of 450.00), otherwise leave two numbers (450.99)
   sql<string>`
     '$' ||
@@ -25,3 +25,14 @@ export const priceWithDiscount = (
       ELSE ${basePrice}
   END
 `.mapWith(Number);
+
+export const formattedDiscount = (
+  discountType: Column | SQL | DiscountType,
+  discountValue: Column | SQL | number,
+) => sql<string>`
+    CASE
+      WHEN ${discountType} = ${DiscountType.FIXED}
+        THEN ${formattedPrice(typeof discountValue === 'number' ? sql`${discountValue}` : discountValue).getSQL()}
+      ELSE ${discountValue} || '%'
+    END
+  `;

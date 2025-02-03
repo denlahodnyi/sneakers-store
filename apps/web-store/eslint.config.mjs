@@ -138,7 +138,11 @@ export default tseslint.config(
       '@stylistic/multiline-ternary': ['off'],
       '@stylistic/jsx-curly-newline': ['off'], // conflicts with Prettier
       '@stylistic/jsx-one-expression-per-line': ['off'], // conflicts with Prettier
-      '@stylistic/quotes': ['on', { avoidEscape: true }],
+      '@stylistic/quotes': [
+        'error',
+        'single',
+        { avoidEscape: true, allowTemplateLiterals: true },
+      ],
     },
   },
   eslintPluginPrettierRecommended,

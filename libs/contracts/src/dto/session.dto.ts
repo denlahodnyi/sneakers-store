@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 export class SessionCreateDto {
   @IsNotEmpty()
@@ -13,9 +13,11 @@ export class SessionUpdateDto {
   @IsNotEmpty()
   sessionToken: string;
 
+  @IsOptional()
   @IsUUID()
   userId?: string;
 
+  @IsOptional()
   @IsDateString()
   expires?: string;
 }

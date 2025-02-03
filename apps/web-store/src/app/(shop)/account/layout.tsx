@@ -17,15 +17,15 @@ async function AccountLayout({ children }: PropsWithChildren) {
             <input className="sr-only" id="foo" type="checkbox" />
           </label>
         </Button>
-        <aside className="absolute z-[1] hidden w-full border border-border bg-background pr-1 peer-has-[:checked]:block sm:static sm:block sm:w-44 sm:border-0 sm:border-r">
+        <aside className="absolute z-[1] hidden w-full border border-border bg-background pr-1 peer-has-[:checked]:block sm:static sm:block sm:w-[200px] sm:border-0 sm:border-r">
           <nav className="flex flex-col">
             <SidebarLink href="/account/profile">
               <UserIcon />
               Profile
             </SidebarLink>
-            <SidebarLink href="/account/favorites">
+            <SidebarLink href="/account/favourites">
               <HeartIcon />
-              Favorites
+              Favourites
             </SidebarLink>
             <SidebarLink href="/account/orders">
               <ReceiptIcon />

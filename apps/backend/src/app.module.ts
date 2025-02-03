@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  type MiddlewareConsumer,
+  type NestModule,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER /* APP_INTERCEPTOR */ } from '@nestjs/core';
 
@@ -17,6 +21,8 @@ import { ProductSkusModule } from './product-skus/product-skus.module.js';
 import { CatalogModule } from './catalog/catalog.module.js';
 import { ProductImagesModule } from './product-images/product-images.module.js';
 import { DiscountsModule } from './discounts/discounts.module.js';
+import { FavouriteProductsModule } from './favourite-products/favourite-products.module.js';
+import { SessionMiddleware } from './auth/session.middleware.js';
 
 const prodEnvs = ['.env.production.local', '.env.production', '.env'];
 const devEnvs = ['.env.development.local', '.env.development', '.env'];
@@ -53,6 +59,7 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
     CatalogModule,
     ProductImagesModule,
     DiscountsModule,
+    FavouriteProductsModule,
   ],
   exports: [],
   controllers: [AppController],
@@ -69,4 +76,8 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
     // },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(SessionMiddleware).forRoutes('*');
+  }
+}

@@ -412,3 +412,40 @@ export interface FullProductSkuResponseDto {
     system: SizeResponseDto['system'];
   } | null;
 }
+
+export class FavProductCreateDto {
+  @IsUUID()
+  productVarId: string;
+}
+
+export class FavProductRemoveDto {
+  @IsUUID()
+  productVarId: string;
+}
+
+export interface FavProductDto {
+  product: ProductResponseDto;
+  productVariant: Omit<
+    ProductVariantResponseDto,
+    'color' | 'images' | 'slug'
+  > & { slug: string };
+  brand: BrandResponseDto;
+  category: CategoryResponseDto;
+  image: ProductImage | null;
+  discount: DiscountResponseDto | null;
+  formattedPrice: string;
+  formattedPriceWithDiscount: string;
+  minBasePrice: number;
+  maxBasePrice: number;
+  minBasePriceWithDiscount: number;
+  maxBasePriceWithDiscount: number;
+  minPrice: number;
+  maxPrice: number;
+  minPriceWithDiscount: number;
+  maxPriceWithDiscount: number;
+  formattedPriceRange: string | null;
+  formattedPriceRangeWithDiscount: string | null;
+  totalQty: number;
+  isInStock: boolean;
+  isFavourite: boolean;
+}

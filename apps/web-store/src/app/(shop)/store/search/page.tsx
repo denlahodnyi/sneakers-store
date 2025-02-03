@@ -2,12 +2,12 @@ import { getClient } from '~/shared/api';
 import { ContentContainer } from '~/shared/ui';
 import { ProductSearchResultItem } from './_ui';
 
-const client = getClient();
+const client = getClient({ isRSC: true });
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string[] | string | undefined }>;
+  searchParams: Promise<Record<string, string[] | string | undefined>>;
 }) {
   const sp = await searchParams;
   if (!sp.q) {

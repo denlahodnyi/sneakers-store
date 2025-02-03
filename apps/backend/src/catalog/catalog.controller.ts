@@ -37,6 +37,7 @@ import { capitalize, omit } from 'lodash-es';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import {
+  favouriteProductsTable,
   productImagesTable,
   productSkusTable,
   productsTable,
@@ -53,6 +54,8 @@ import { INVALID_QUERY } from '../shared/constants.js';
 import { discountsTable } from '../db/schemas/discounts.schema.js';
 import { priceWithDiscount } from '../shared/sql/templates.js';
 import type { InferRecordDataTypes } from '../drizzle/drizzle.lib.js';
+import type { UserEntity } from '../db/schemas/user.schema.js';
+import { User } from '../auth/user.decorator.js';
 
 const LIMIT = 10;
 const MINOR_UNITS = PRICE_MINOR_UNITS;
@@ -65,6 +68,8 @@ export class CatalogController {
   async getCatalogProducts(
     @Query(new ConfiguredValidationPipe({ errorMessage: INVALID_QUERY }))
     query: CatalogQueryDto,
+    @User()
+    user: UserEntity,
   ) {
     const productFilters: (SQL | undefined)[] = [];
     const fullProductFilters: (SQL | undefined)[] = [];
@@ -102,8 +107,9 @@ export class CatalogController {
       );
     }
 
-    const reducedVariantsWithSkuQuery = getDistinctVariantsQuery(
+    const distinctVariantsCteQuery = getDistinctVariantsQuery(
       this.drizzleService.db,
+      user,
       variantsFilters,
       skuFilters,
       isOnSale,
@@ -129,7 +135,7 @@ export class CatalogController {
     // }
     if (selectedColors.length) {
       fullProductFilters.push(
-        inArray(reducedVariantsWithSkuQuery.colorId, selectedColors),
+        inArray(distinctVariantsCteQuery.colorId, selectedColors),
       );
     }
     if (query.price) {
@@ -141,12 +147,12 @@ export class CatalogController {
         fullProductFilters.push(
           or(
             and(
-              gte(reducedVariantsWithSkuQuery.minBasePrice, min * MINOR_UNITS),
-              lte(reducedVariantsWithSkuQuery.minBasePrice, max * MINOR_UNITS),
+              gte(distinctVariantsCteQuery.minBasePrice, min * MINOR_UNITS),
+              lte(distinctVariantsCteQuery.minBasePrice, max * MINOR_UNITS),
             ),
             and(
-              lte(reducedVariantsWithSkuQuery.maxBasePrice, max * MINOR_UNITS),
-              gte(reducedVariantsWithSkuQuery.maxBasePrice, min * MINOR_UNITS),
+              lte(distinctVariantsCteQuery.maxBasePrice, max * MINOR_UNITS),
+              gte(distinctVariantsCteQuery.maxBasePrice, min * MINOR_UNITS),
             ),
           ),
         );
@@ -165,7 +171,7 @@ export class CatalogController {
     const fullProductsQuery = getFullProductQuery(
       this.drizzleService.db,
       filteredProductsQuery,
-      reducedVariantsWithSkuQuery,
+      distinctVariantsCteQuery,
       fullProductFilters,
     ).as('all_full_products');
     const allDistinctProductsQuery = this.drizzleService.db
@@ -244,7 +250,7 @@ export class CatalogController {
               'full_products_paginated_and_imgs',
             ),
           )
-          .orderBy(desc(reducedVariantsWithSkuQuery.maxBasePrice)) as any;
+          .orderBy(desc(distinctVariantsCteQuery.maxBasePrice)) as any;
       }
       if (sortBy === '-price') {
         fullPaginatedAndOrderedProductsQuery = this.drizzleService.db
@@ -254,7 +260,7 @@ export class CatalogController {
               'full_products_paginated_and_imgs',
             ),
           )
-          .orderBy(asc(reducedVariantsWithSkuQuery.minBasePrice)) as any;
+          .orderBy(asc(distinctVariantsCteQuery.minBasePrice)) as any;
       }
     }
     const totalFullDistinctProductsQuery = this.drizzleService.db.$count(
@@ -306,6 +312,7 @@ export class CatalogController {
           hex: distinct_vars.hex,
           totalQty: distinct_vars.totalQty,
           isInStock: !!distinct_vars.totalQty,
+          isFavourite: distinct_vars.isFavourite,
           formattedPrice: '$' + minPrice,
           formattedPriceWithDiscount: '$' + minPriceWithDiscount,
           minBasePrice: distinct_vars.minBasePrice,
@@ -740,7 +747,10 @@ export class CatalogController {
 
   @Get('products/:id') // id = variantId
   @TsRestHandler(c.catalog.getProductDetails)
-  async getCatalogProductDetails(@Param('id') idOrSlug: string) {
+  async getCatalogProductDetails(
+    @Param('id') idOrSlug: string,
+    @User() user: UserEntity,
+  ) {
     if (!idOrSlug) throw new NotFoundException();
 
     const discountsSubQuery = this.drizzleService.db
@@ -862,6 +872,26 @@ export class CatalogController {
           variantWithFullProduct.discounts?.discountType || null,
           variantWithFullProduct.discounts?.discountValue || null,
         ),
+        isFavourite: !user?.id
+          ? sql<boolean>`false`
+          : sql<boolean>`
+          CASE
+            WHEN (${this.drizzleService.db
+              .select({ id: getTableColumns(favouriteProductsTable).id })
+              .from(favouriteProductsTable)
+              .where(
+                and(
+                  eq(favouriteProductsTable.userId, user.id),
+                  eq(
+                    favouriteProductsTable.productVarId,
+                    aggregatedVariantsQuery.productVariantId,
+                  ),
+                ),
+              )}) IS NOT NULL
+            THEN true
+            ELSE false
+          END
+        `,
       })
       .from(aggregatedVariantsQuery)
       .innerJoin(
@@ -939,11 +969,12 @@ export class CatalogController {
         isInStock: !!product_skus.stockQty,
       })),
       variants: allVariants.map(
-        ({ colors, product_variants, aggregated_variants }) => ({
+        ({ colors, product_variants, aggregated_variants, isFavourite }) => ({
           ...product_variants,
           slug: product_variants.slug || product_variants.id,
           color: colors,
           isInStock: !!aggregated_variants.totalStockQty,
+          isFavourite,
         }),
       ),
       images: currentVarImgs,
@@ -967,6 +998,7 @@ export class CatalogController {
           ? `$${minPriceWithDiscount}-${maxPriceWithDiscount}`
           : null,
       isInStock: !!currentVariant.aggregated_variants.totalStockQty,
+      isFavourite: currentVariant.isFavourite,
     };
 
     return tsRestHandler(c.catalog.getProductDetails, async () => ({
@@ -1111,6 +1143,7 @@ function getFilteredProductsQuery(
 
 function getDistinctVariantsQuery(
   db: DrizzleService['db'],
+  user?: UserEntity,
   variantsFilters: (SQL | undefined)[] = [],
   skuFilters: (SQL | undefined)[] = [],
   isOnSale = false,
@@ -1147,7 +1180,7 @@ function getDistinctVariantsQuery(
     .where(and(eq(discountsTable.isActive, true)))
     .as('var_disc');
 
-  const distinctVarsSelection = db
+  let distinctVarsSelection = db
     .selectDistinctOn([productVariantsTable.id], {
       totalQty: sql`
           (${db
@@ -1204,6 +1237,15 @@ function getDistinctVariantsQuery(
       color: colorsTable.name,
       hex: colorsTable.hex,
       discount: discountsSubQuery._.selectedFields,
+      isFavourite: user?.id
+        ? sql<boolean>`
+          CASE
+            WHEN ${favouriteProductsTable.id} IS NOT NULL
+            THEN true
+            else false
+          END
+        `.as('favorite')
+        : sql<boolean>`false`.as('favorite'),
     })
     .from(productVariantsTable)
     .where((t) =>
@@ -1230,17 +1272,15 @@ function getDistinctVariantsQuery(
     .leftJoin(colorsTable, eq(colorsTable.id, productVariantsTable.colorId))
     .$dynamic();
 
-  // if (isOnSale) {
-  //   distinctVarsSelection.innerJoin(
-  //     discountsSubQuery,
-  //     eq(discountsSubQuery.productVarId, productVariantsTable.id),
-  //   );
-  // } else {
-  //   distinctVarsSelection.leftJoin(
-  //     discountsSubQuery,
-  //     eq(discountsSubQuery.productVarId, productVariantsTable.id),
-  //   );
-  // }
+  if (user?.id) {
+    distinctVarsSelection = distinctVarsSelection.leftJoin(
+      favouriteProductsTable,
+      and(
+        eq(favouriteProductsTable.productVarId, productVariantsTable.id),
+        eq(favouriteProductsTable.userId, user.id),
+      ),
+    );
+  }
 
   return db.$with('distinct_vars').as(distinctVarsSelection);
 }
@@ -1250,12 +1290,12 @@ function getFullProductQuery(
   productsQuery: ReturnType<
     ReturnType<typeof getFilteredProductsQuery>['$dynamic']
   >,
-  skuByDistinctVariantQuery: ReturnType<typeof getDistinctVariantsQuery>,
+  distinctVariantsCteQuery: ReturnType<typeof getDistinctVariantsQuery>,
   filters: (SQL | undefined)[],
 ) {
   const dynamicProductsQuery = productsQuery.as('products');
   const query = db
-    .with(skuByDistinctVariantQuery)
+    .with(distinctVariantsCteQuery)
     .select({
       // Rename ambiguous columns (like id)
       products: {
@@ -1293,22 +1333,23 @@ function getFullProductQuery(
         isActive: sql<boolean>`${brandsTable.isActive}`.as('isActiveBrand'),
       },
       distinct_vars: {
-        totalQty: skuByDistinctVariantQuery.totalQty,
-        productId: skuByDistinctVariantQuery.productId,
-        variantSlug: skuByDistinctVariantQuery.variantSlug,
-        variantId: skuByDistinctVariantQuery.variantId,
-        variantName: skuByDistinctVariantQuery.variantName,
-        minBasePrice: skuByDistinctVariantQuery.minBasePrice,
-        maxBasePrice: skuByDistinctVariantQuery.maxBasePrice,
+        totalQty: distinctVariantsCteQuery.totalQty,
+        productId: distinctVariantsCteQuery.productId,
+        variantSlug: distinctVariantsCteQuery.variantSlug,
+        variantId: distinctVariantsCteQuery.variantId,
+        variantName: distinctVariantsCteQuery.variantName,
+        minBasePrice: distinctVariantsCteQuery.minBasePrice,
+        maxBasePrice: distinctVariantsCteQuery.maxBasePrice,
         minBasePriceWithDiscount:
-          skuByDistinctVariantQuery.minBasePriceWithDiscount,
+          distinctVariantsCteQuery.minBasePriceWithDiscount,
         maxBasePriceWithDiscount:
-          skuByDistinctVariantQuery.maxBasePriceWithDiscount,
-        colorId: skuByDistinctVariantQuery.colorId,
-        color: skuByDistinctVariantQuery.color,
-        hex: skuByDistinctVariantQuery.hex,
-        discountType: skuByDistinctVariantQuery.discount.discountType,
-        discountValue: skuByDistinctVariantQuery.discount.discountValue,
+          distinctVariantsCteQuery.maxBasePriceWithDiscount,
+        colorId: distinctVariantsCteQuery.colorId,
+        color: distinctVariantsCteQuery.color,
+        hex: distinctVariantsCteQuery.hex,
+        discountType: distinctVariantsCteQuery.discount.discountType,
+        discountValue: distinctVariantsCteQuery.discount.discountValue,
+        isFavourite: distinctVariantsCteQuery.isFavourite,
       },
     })
     .from(dynamicProductsQuery)
@@ -1319,8 +1360,8 @@ function getFullProductQuery(
       eq(categoriesTable.id, dynamicProductsQuery.categoryId),
     )
     .innerJoin(
-      skuByDistinctVariantQuery,
-      eq(dynamicProductsQuery.id, skuByDistinctVariantQuery.productId),
+      distinctVariantsCteQuery,
+      eq(dynamicProductsQuery.id, distinctVariantsCteQuery.productId),
     );
 
   return query;

@@ -16,10 +16,9 @@ import {
   contract as c,
   DiscountCreateDto,
   DiscountQueryDto,
-  DiscountType,
   DiscountUpdateDto,
 } from '@sneakers-store/contracts';
-import { and, eq, getTableColumns, not, sql, type SQL } from 'drizzle-orm';
+import { and, eq, getTableColumns, not, type SQL } from 'drizzle-orm';
 
 import { DrizzleService } from '../drizzle/drizzle.service.js';
 import { Roles } from '../auth/roles.decorator.js';
@@ -27,18 +26,15 @@ import { AuthGuard } from '../auth/auth.guard.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
 import { discountsTable } from '../db/schemas/discounts.schema.js';
 import { INVALID_QUERY } from '../shared/constants.js';
-import { formattedPrice } from '../shared/sql/templates.js';
+import { formattedDiscount } from '../shared/sql/templates.js';
 import { ADMIN_ROLES } from '../db/schemas/user.schema.js';
 
 const selection = {
   ...getTableColumns(discountsTable),
-  formattedDiscount: sql<string>`
-    CASE
-      WHEN ${discountsTable.discountType} = ${DiscountType.FIXED}
-        THEN ${formattedPrice(discountsTable.discountValue).getSQL()}
-      ELSE ${discountsTable.discountValue} || '%'
-    END
-  `,
+  formattedDiscount: formattedDiscount(
+    discountsTable.discountType,
+    discountsTable.discountValue,
+  ),
 };
 
 @Controller('discounts')

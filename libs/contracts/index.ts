@@ -14,6 +14,7 @@ import { productSkuContract } from './src/product-sku.contract.js';
 import { catalogContract } from './src/catalog.contract.js';
 import { productImgContract } from './src/product-image.contract.js';
 import { discountContract } from './src/discount.contract.js';
+import { favProductsContract } from './src/favourite-products.contract.js';
 
 const c = initContract();
 
@@ -40,6 +41,7 @@ export const contract = c.router(
     productImages: productImgContract,
     catalog: catalogContract,
     discount: discountContract,
+    favoriteProducts: favProductsContract,
   },
   { strictStatusCodes: true }
 );

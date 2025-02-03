@@ -1,5 +1,5 @@
 import { ArrowUpDownIcon, FilterIcon } from 'lucide-react';
-import type { CatalogQueryDto } from '@sneakers-store/contracts';
+import { cookies } from 'next/headers';
 
 import {
   FiltersProvider,
@@ -27,17 +27,19 @@ export default async function CatalogPage(props: {
 }) {
   const params = await props.params;
   const sp = await props.searchParams;
+  const cookieStore = await cookies();
   const qp: Record<string, string | string[] | undefined> = {
     categorySlug: params.category?.[0] || undefined,
     [SORT_SEARCH_PARAM]: sp[SORT_SEARCH_PARAM],
   };
 
-  for (const [key, param] of Object.entries(FiltersSearchParam)) {
+  for (const [, param] of Object.entries(FiltersSearchParam)) {
     if (sp[param]) qp[param] = sp[param];
   }
 
   const [productsRes, filtersRes] = await Promise.all([
     client.catalog.getProducts({
+      extraHeaders: { Cookie: cookieStore.toString() }, // Attach session cookie
       query: {
         ...qp,
         page: typeof sp.page === 'string' ? Number(sp.page) : undefined,

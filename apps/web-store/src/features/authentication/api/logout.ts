@@ -4,7 +4,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 import { signOut } from '~/shared/api';
 
-export const logoutServerFn = async () => {
+export const logout = async () => {
   try {
     await signOut({ redirectTo: '/' });
   } catch (error) {

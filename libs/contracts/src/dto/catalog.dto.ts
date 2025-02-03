@@ -72,6 +72,7 @@ export interface CatalogResponseDto {
     formattedPriceRange: string | null;
     formattedPriceRangeWithDiscount: string | null;
     images: ProductVariantResponseDto['images'];
+    isFavourite: boolean;
   }[];
   totalQty: number;
   isInStock: boolean;
@@ -178,6 +179,7 @@ export interface CatalogProductDetailsDto {
   formattedPriceRange: string | null;
   formattedPriceRangeWithDiscount: string | null;
   isInStock: boolean;
+  isFavourite: boolean;
 }
 
 export interface CatalogSearchDto {
