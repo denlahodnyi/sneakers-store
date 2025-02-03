@@ -41,16 +41,20 @@ const getNextAuthRestAdapter = (client: Client): Adapter => ({
     return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
   },
   async getUserByEmail(email) {
-    const { body } = await client.users.getUserByAccountOrEmail({
+    const { body } = await client.users.getUsers({
       query: { email },
     });
-    return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
+    return body.data.users.length
+      ? mapUserDtoToAdapter(body.data.users[0])
+      : null;
   },
   async getUserByAccount({ provider, providerAccountId }) {
-    const { body } = await client.users.getUserByAccountOrEmail({
+    const { body } = await client.users.getUsers({
       query: { provider, providerAccountId },
     });
-    return body.data.user ? mapUserDtoToAdapter(body.data.user) : null;
+    return body.data.users.length
+      ? mapUserDtoToAdapter(body.data.users[0])
+      : null;
   },
   async updateUser(user) {
     const { name, image, ...rest } = user;

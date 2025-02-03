@@ -4,16 +4,17 @@ import {
   HeadsetIcon,
   MoveRight,
 } from 'lucide-react';
+import { Suspense } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { Button, ContentContainer } from '~/shared/ui';
 import {
   BestOffersList,
   BestOffersListFallback,
   FeaturedProducts,
   FeaturedProductsFallback,
 } from './_ui';
-import { Suspense } from 'react';
-import { Button, ContentContainer } from '~/shared/ui';
-import Image from 'next/image';
-import Link from 'next/link';
 
 function HomePage() {
   return (
@@ -25,8 +26,8 @@ function HomePage() {
           </h1>
           <Button
             asChild
-            variant="tertiary"
             className="min-[480px]:px-8 min-[480px]:py-6 min-[480px]:text-2xl"
+            variant="tertiary"
           >
             <Link href="/store">
               Show now
@@ -37,11 +38,11 @@ function HomePage() {
         <div className="relative flex-1">
           <Image
             fill
-            src="/banner_2.jpg"
+            priority
             alt=""
             className="object-cover"
             sizes="(min-width: 480px) 50vw, 100vw"
-            priority
+            src="/banner_2.jpg"
           />
         </div>
       </div>
@@ -62,22 +63,22 @@ function HomePage() {
         <ul className="mx-auto flex max-w-[600xp] justify-between gap-3 lg:max-w-[800px]">
           <li className="flex-1 text-center">
             <FileBadgeIcon
-              className="mb-3 inline-block size-[36px]"
               aria-hidden
+              className="mb-3 inline-block size-[36px]"
             />
             <p className="text-xl">100% authentic products</p>
           </li>
           <li className="flex-1 text-center">
             <ArrowLeftRightIcon
-              className="mb-3 inline-block size-[36px]"
               aria-hidden
+              className="mb-3 inline-block size-[36px]"
             />
             <p className="text-xl">Hassle-free returns</p>
           </li>
           <li className="flex-1 text-center">
             <HeadsetIcon
-              className="mb-3 inline-block size-[36px]"
               aria-hidden
+              className="mb-3 inline-block size-[36px]"
             />
             <p className="text-xl">24/7 Customer Support</p>
           </li>

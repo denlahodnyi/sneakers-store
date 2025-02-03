@@ -22,6 +22,20 @@
       "when": 1738337331059,
       "tag": "0002_products_and_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1738408008958,
+      "tag": "0003_users_timestamps",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1738622024364,
+      "tag": "0004_favourite_products",
+      "breakpoints": true
     }
   ]
 }

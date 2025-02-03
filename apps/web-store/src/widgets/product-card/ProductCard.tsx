@@ -1,14 +1,16 @@
 'use client';
 import type { CatalogResponseDto } from '@sneakers-store/contracts';
+import { HeartIcon } from 'lucide-react';
 // import { ShoppingBagIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useContext, useState } from 'react';
 
 import { cn } from '~/shared/lib';
 // import { Button } from '~/shared/ui';
-import placeholderImg from '../../../public/placeholder_2_1080x1080.webp';
-import { getConicGradientFromHexes } from '~/shared/ui';
-import { useState } from 'react';
+import { Button, getConicGradientFromHexes } from '~/shared/ui';
+import { AuthContext, LoginModal } from '../../features/authentication';
+import { ProductLikeForm } from '../../features/like-products';
 
 export default function ProductCard({
   product,
@@ -16,26 +18,57 @@ export default function ProductCard({
   product: CatalogResponseDto;
 }) {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  const session = useContext(AuthContext);
+
   return (
     <article
       className={cn(
-        'flex flex-col rounded-sm bg-card p-2 px-3 pb-5',
+        'relative flex flex-col rounded-sm bg-card p-2 px-3 pb-5',
         !product.isInStock && 'opacity-50',
       )}
     >
+      {session?.user?.id ? (
+        <ProductLikeForm
+          key={selectedVariant.variantId}
+          defaultState={selectedVariant.isFavourite}
+          productVarId={selectedVariant.variantId}
+        >
+          {(isLiked, likePending) => (
+            <Button
+              className="absolute right-[16px] top-[36px] z-[1] rounded-full text-foreground"
+              disabled={likePending}
+              size="icon"
+              type="submit"
+              variant="ghost"
+            >
+              <HeartIcon className={cn(isLiked && 'fill-tertiary')} />
+            </Button>
+          )}
+        </ProductLikeForm>
+      ) : (
+        <LoginModal>
+          <Button
+            className="absolute right-[16px] top-[36px] z-[1] rounded-full text-foreground"
+            size="icon"
+            variant="ghost"
+          >
+            <HeartIcon />
+          </Button>
+        </LoginModal>
+      )}
       <div className="mb-2 flex">
         {product.variants.map((variant, i) =>
           variant.hex ? (
             <Link
               key={variant.variantId}
               href={`/store/product/${variant.slug}`}
-              style={{
-                backgroundImage: getConicGradientFromHexes(variant.hex),
-              }}
               className={cn(
                 'block size-5 rounded-full hover:ring-2 hover:ring-tertiary md:size-4',
                 i !== 0 && 'ml-2 md:ml-1',
               )}
+              style={{
+                backgroundImage: getConicGradientFromHexes(variant.hex),
+              }}
               onMouseEnter={() => setSelectedVariant(variant)}
             >
               <span className="sr-only">
@@ -51,15 +84,15 @@ export default function ProductCard({
       >
         <div className="relative mb-1 aspect-square w-full">
           <Image
+            fill
             alt=""
             className="object-cover"
             quality={75}
+            sizes="(min-width: 768px) 33vw, (min-width: 1024px) 25vw, 50vw"
             src={
               selectedVariant.images?.[0]?.url ||
               '/placeholder_2_1080x1080.webp'
             }
-            fill
-            sizes="(min-width: 768px) 33vw, (min-width: 1024px) 25vw, 50vw"
           />
         </div>
         <p className="mb-1 text-center font-normal text-zinc-500">

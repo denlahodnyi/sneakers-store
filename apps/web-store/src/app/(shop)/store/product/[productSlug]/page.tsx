@@ -1,9 +1,9 @@
 import { HeartIcon, ShoppingBagIcon } from 'lucide-react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { cookies } from 'next/headers';
 
-import { getClient } from '~/shared/api';
+import { auth, getClient } from '~/shared/api';
 import {
   Button,
   ContentContainer,
@@ -12,6 +12,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '~/shared/ui';
+import { LoginModal } from '~/features/authentication';
 import {
   ColorVariantLink,
   LastItemsAlert,
@@ -22,18 +23,22 @@ import {
 } from '../_ui';
 import Gallery from '../_ui/Gallery';
 import ScrollToTop from './TopScroll';
+import { ProductDetailsLikeButton } from '../_ui/product-details';
 
-const client = getClient();
+const client = getClient({ isRSC: true });
 
 export default async function ProductPage(props: {
   params: Promise<{ productSlug: string }>;
 }) {
   const { productSlug } = await props.params;
+  const cookieStore = await cookies();
   const { body, status } = await client.catalog.getProductDetails({
+    extraHeaders: { Cookie: cookieStore.toString() }, // Attach session cookie
     params: { id: productSlug },
   });
   if (status === 404) notFound();
   const { details } = body.data;
+  const session = await auth();
 
   return (
     <ContentContainer className="grid w-full flex-1 auto-rows-auto grid-cols-1 gap-6 md:grid-cols-2 md:gap-10 lg:grid-cols-[45%_55%] lg:gap-16">
@@ -44,12 +49,12 @@ export default async function ProductPage(props: {
           <div className="mb-3 flex items-center space-x-2">
             {details.brand.iconUrl && (
               <Image
+                unoptimized
                 alt=""
+                className="rounded-full border border-solid border-border p-1"
                 height={30}
                 src={details.brand.iconUrl}
                 width={30}
-                unoptimized
-                className="rounded-full border border-solid border-border p-1"
               />
             )}
             <p className="font-bold">{details.brand.name}</p>
@@ -57,6 +62,7 @@ export default async function ProductPage(props: {
           <h1 className="mb-5 text-3xl font-bold">{details.name}</h1>
           <p className="mb-5 text-4xl font-extrabold">
             <ProductPrice
+              hasDiscount={!!details.formattedDiscount}
               defaultPrice={
                 details.formattedPriceRange || details.formattedPrice
               }
@@ -66,7 +72,6 @@ export default async function ProductPage(props: {
                     details.formattedPriceWithDiscount
                   : undefined
               }
-              hasDiscount={!!details.formattedDiscount}
             />
             {details.formattedDiscount && (
               <span className="ml-1 rounded-sm bg-destructive px-1 text-3xl text-destructive-foreground">{`-${details.formattedDiscount}`}</span>
@@ -116,23 +121,32 @@ export default async function ProductPage(props: {
             ) : (
               <p className="pr-5 text-2xl text-zinc-500">Is out of stock</p>
             )}
-            <Button className="px-3" size="lg" variant="secondary">
-              <HeartIcon className="size-5" />
-            </Button>
+            {session?.user?.id ? (
+              <ProductDetailsLikeButton
+                isFavourite={details.isFavourite}
+                productVarId={details.variantId}
+              />
+            ) : (
+              <LoginModal>
+                <Button className="px-3" size="lg" variant="secondary">
+                  <HeartIcon className="size-5" />
+                </Button>
+              </LoginModal>
+            )}
           </div>
         </div>
         <div className="md:col-span-2">
           <Tabs defaultValue="details">
             <TabsList className="space-x-7 bg-background p-0">
               <TabsTrigger
-                value="details"
                 className="p-0 text-xl font-semibold text-zinc-500 focus-visible:ring-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                value="details"
               >
                 Details
               </TabsTrigger>
               <TabsTrigger
-                value="reviews"
                 className="p-0 text-xl font-semibold text-zinc-500 focus-visible:ring-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                value="reviews"
               >
                 Reviews
               </TabsTrigger>
@@ -143,7 +157,7 @@ export default async function ProductPage(props: {
                 dangerouslySetInnerHTML={{
                   __html: details.product.descriptionHtml || '',
                 }}
-              ></div>
+              />
             </TabsContent>
             <TabsContent value="reviews">TODO</TabsContent>
           </Tabs>

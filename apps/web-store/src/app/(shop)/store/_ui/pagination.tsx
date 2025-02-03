@@ -3,6 +3,7 @@ import type { Contract } from '@sneakers-store/contracts';
 import type { ClientInferResponseBody } from '@ts-rest/core';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
+
 import {
   Pagination,
   PaginationContent,
@@ -54,7 +55,7 @@ export function CatalogPagination({
           </>
         )}
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink isActive href="#">
             {pagination.current}
           </PaginationLink>
         </PaginationItem>

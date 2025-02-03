@@ -9,11 +9,11 @@ import {
 import { FaGoogle } from 'react-icons/fa';
 
 import { Button, showErrorMessage } from '~/shared/ui';
-import { signInWithGoogleServerFn } from '../api';
+import { signInWithGoogle } from '../api';
 
 function GoogleSigninButton(props: ComponentProps<'button'>) {
   const [state, action, isPending] = useActionState(
-    signInWithGoogleServerFn,
+    signInWithGoogle,
     undefined,
   );
 

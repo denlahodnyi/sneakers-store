@@ -8,6 +8,7 @@ import { categoriesTable } from './category.schema.js';
 import { colorsTable } from './color.schema.js';
 import { sizesTable } from './size.schema.js';
 import { timestamps } from './columns.utils.js';
+import { usersTable } from './user.schema.js';
 
 export const genderEnum = t.pgEnum('gender', [
   Gender.MEN,
@@ -105,4 +106,20 @@ export const productImagesTable = t.pgTable('product_images', {
   width: t.integer(),
   height: t.integer(),
   ...timestamps,
+});
+
+export const favouriteProductsTable = t.pgTable('favourite_products', {
+  id: t
+    .text()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  productVarId: t
+    .text()
+    .notNull()
+    .references(() => productVariantsTable.id, { onDelete: 'cascade' }),
+  userId: t
+    .text()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  createdAt: timestamps.createdAt,
 });

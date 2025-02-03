@@ -3,12 +3,12 @@
 import { LogOutIcon } from 'lucide-react';
 import { startTransition, useActionState, useContext, useEffect } from 'react';
 
-import { logoutServerFn, AuthContext } from '~/features/authentication';
+import { logout, AuthContext } from '~/features/authentication';
 import { Button, showErrorMessage, type ButtonProps } from '~/shared/ui';
 
 function SidebarLogoutButton({ ...rest }: ButtonProps) {
   const authCtx = useContext(AuthContext);
-  const [state, action, isPending] = useActionState(logoutServerFn, undefined);
+  const [state, action, isPending] = useActionState(logout, undefined);
 
   useEffect(() => {
     if (state?.clientMessage) showErrorMessage(state.clientMessage);
@@ -17,7 +17,7 @@ function SidebarLogoutButton({ ...rest }: ButtonProps) {
   return authCtx?.user?.id ? (
     <Button
       {...rest}
-      className="w-full justify-between"
+      className="w-full justify-between text-base"
       disabled={isPending}
       onClick={() => {
         startTransition(() => {

@@ -16,8 +16,9 @@ export default async function BestOffersList() {
     query: { sale: 'true', perPage: 10 },
   });
   const products = body.data.products;
+
   return (
-    <Carousel opts={{ align: 'start' }} className="max-w-full">
+    <Carousel className="max-w-full" opts={{ align: 'start' }}>
       <CarouselContent className="mb-3 md:mb-0">
         {products.map((p) => (
           <CarouselItem
@@ -29,12 +30,12 @@ export default async function BestOffersList() {
         ))}
       </CarouselContent>
       <CarouselPrevious
-        variant="ghost"
         className="static translate-y-0 [&_svg]:size-7 md:[&_svg]:size-4"
+        variant="ghost"
       />
       <CarouselNext
-        variant="ghost"
         className="static ml-5 translate-y-0 md:ml-1 [&_svg]:size-7 md:[&_svg]:size-4"
+        variant="ghost"
       />
     </Carousel>
   );

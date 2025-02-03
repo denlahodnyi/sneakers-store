@@ -3,8 +3,8 @@ import type { CatalogProductDetailsDto } from '@sneakers-store/contracts';
 import { useState } from 'react';
 import Image from 'next/image';
 
-import placeholderImg from '../../../../../../public/placeholder_2_1080x1080.webp';
 import { cn } from '~/shared/lib';
+import placeholderImg from '../../../../../../public/placeholder_2_1080x1080.webp';
 
 export default function Gallery({
   images,
@@ -21,15 +21,15 @@ export default function Gallery({
     <div>
       <div className="relative mb-4 aspect-square w-full rounded-md">
         <Image
-          src={currentImg?.url || placeholderImg}
+          fill
+          priority
           alt={currentImg?.alt || ''}
           className="rounded-[inherit] object-cover"
-          fill
-          quality={90}
-          sizes="(min-width: 768px) 50vw, 100vw"
-          priority
           loading="eager"
           placeholder="empty"
+          quality={90}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          src={currentImg?.url || placeholderImg}
           // {...currentImgSizes}
         />
       </div>
@@ -44,12 +44,12 @@ export default function Gallery({
             onMouseEnter={() => setSelected(i)}
           >
             <Image
-              src={img.url}
-              alt={img.alt || ''}
               fill
+              alt={img.alt || ''}
               className="rounded-[inherit] object-cover"
               quality={10}
               sizes="5vw"
+              src={img.url}
             />
           </div>
         ))}

@@ -4,7 +4,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 
 import { signIn } from '~/shared/api';
 
-export const signInWithGoogleServerFn = async () => {
+export const signInWithGoogle = async () => {
   try {
     await signIn('google');
   } catch (error) {

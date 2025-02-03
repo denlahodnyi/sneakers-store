@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import { getConicGradientFromHexes } from '~/shared/ui';
 
 export default function ColorVariantLink(props: {

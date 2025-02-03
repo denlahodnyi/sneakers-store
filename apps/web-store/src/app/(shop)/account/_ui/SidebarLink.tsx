@@ -12,7 +12,7 @@ function SidebarLink({ children, href }: { href: string } & PropsWithChildren) {
   return (
     <Button
       asChild
-      className="w-full justify-between"
+      className="w-full justify-between text-base"
       variant={isActive ? 'default' : 'ghost'}
     >
       <Link href={isActive ? '#' : href}>{children}</Link>

@@ -7,31 +7,23 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { Reflector } from '@nestjs/core';
+import type { Role } from '@sneakers-store/contracts';
 
-import { DrizzleService } from '../drizzle/drizzle.service.js';
-import { getSession } from '../shared/libs/next-auth/getSession.js';
 import { IS_PUBLIC_KEY } from './public.decorator.js';
-import type { Role, UserEntity } from '../db/schemas/user.schema.js';
+import type { UserEntity } from '../db/schemas/user.schema.js';
 import {
   IS_AUTH_CONDITION_KEY,
   type ConditionsHandler,
 } from './auth-conditions.decorator.js';
 import { ROLES_DECORATOR_KEY } from './roles.decorator.js';
 
-declare module 'express' {
-  interface Request {
-    user?: UserEntity;
-  }
+interface RequestWithDefinedUser extends Request {
+  user: UserEntity;
 }
-
-type RequestWithDefinedUser = Omit<Request, 'user'> & { user: UserEntity };
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private drizzleService: DrizzleService,
-    private reflector: Reflector,
-  ) {}
+  constructor(private reflector: Reflector) {}
 
   async canActivate(ctx: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -50,10 +42,8 @@ export class AuthGuard implements CanActivate {
     );
 
     const request = ctx.switchToHttp().getRequest<Request>();
-    const session = await getSession(request, this.drizzleService.db);
 
-    if (session?.user) {
-      request.user = session.user as UserEntity;
+    if (request?.user) {
       if (handler) {
         const allow = checkConditions(
           handler(request.user),

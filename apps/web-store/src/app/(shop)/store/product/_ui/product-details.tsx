@@ -2,6 +2,7 @@
 
 import type { Contract } from '@sneakers-store/contracts';
 import type { ClientInferResponseBody } from '@ts-rest/core';
+import { HeartIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import {
   createContext,
@@ -13,8 +14,9 @@ import {
   type ReactNode,
   type SetStateAction,
 } from 'react';
-import { cn } from '~/shared/lib';
 
+import { ProductLikeForm } from '~/features/like-products';
+import { cn } from '~/shared/lib';
 import { Button, type ButtonProps } from '~/shared/ui';
 
 type ProductDetails = ClientInferResponseBody<
@@ -152,4 +154,29 @@ export function LastItemsAlert(props: ComponentProps<'p'>) {
   return qty && qty <= 5 ? (
     <p role="alert" {...props}>{`Only ${qty} left`}</p>
   ) : null;
+}
+
+export function ProductDetailsLikeButton({
+  isFavourite,
+  productVarId,
+}: {
+  productVarId: string;
+  isFavourite: boolean;
+}) {
+  return (
+    <ProductLikeForm defaultState={isFavourite} productVarId={productVarId}>
+      {(isLiked, likePending) => (
+        <Button
+          aria-label={isLiked ? 'Remove from favourites' : 'Mark as favourite'}
+          className={cn('px-3 text-foreground', likePending && 'opacity-50')}
+          disabled={likePending}
+          size="lg"
+          type="submit"
+          variant="secondary"
+        >
+          <HeartIcon className={cn('size-5', isLiked && 'fill-foreground')} />
+        </Button>
+      )}
+    </ProductLikeForm>
+  );
 }
