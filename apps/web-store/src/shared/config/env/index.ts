@@ -7,7 +7,7 @@ export const env = createEnv({
     API_URL: z.string().url(),
   },
   client: {
-    NEXT_PUBLIC_API_URL: z.string().url().optional(),
+    NEXT_PUBLIC_API_URL: z.string().url(),
   },
   emptyStringAsUndefined: true,
   isServer: typeof window === 'undefined',
@@ -15,6 +15,6 @@ export const env = createEnv({
     throw new Error(JSON.stringify(error.format()));
   },
   experimental__runtimeEnv: {
-    NEXT_PUBLIC_API_URL: process.env.API_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
 });

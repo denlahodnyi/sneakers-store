@@ -11,7 +11,7 @@ export const formattedPrice = (column: Column | SQL) =>
         ELSE ROUND(${column}::numeric / ${PRICE_MINOR_UNITS}, 2) -- Keep decimals (e.g 450.99)
       END`;
 
-export const priceWithDiscount = (
+export const basePriceWithDiscount = (
   basePrice: Column | SQL,
   discountType: Column | SQL | DiscountType | null,
   discountValue: Column | SQL | number | null,
@@ -29,10 +29,12 @@ export const priceWithDiscount = (
 export const formattedDiscount = (
   discountType: Column | SQL | DiscountType,
   discountValue: Column | SQL | number,
-) => sql<string>`
+) =>
+  sql<string | null>`
     CASE
       WHEN ${discountType} = ${DiscountType.FIXED}
         THEN ${formattedPrice(typeof discountValue === 'number' ? sql`${discountValue}` : discountValue).getSQL()}
-      ELSE ${discountValue} || '%'
+      WHEN ${discountType} = ${DiscountType.PERCENTAGE}
+        THEN ${discountValue} || '%'
     END
   `;

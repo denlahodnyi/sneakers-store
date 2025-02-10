@@ -110,8 +110,14 @@ async function ProductPage({
               <Box sx={{ color: 'text.secondary', fontSize: 14 }}>
                 ID: {pv.id}
               </Box>
-              <div>Name: {pv.name || 'N/A'}</div>
-              <div>Discount: {pv.discount?.formattedDiscount || 'N/A'}</div>
+              <div>
+                Name:
+                {pv.name || 'N/A'}
+              </div>
+              <div>
+                Discount:
+                {pv.discount?.formattedDiscount || 'N/A'}
+              </div>
             </CardContent>
           </Card>
         ))}

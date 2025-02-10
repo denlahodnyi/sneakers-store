@@ -16,6 +16,7 @@ import {
   min,
   sql,
   sum,
+  type SQL,
 } from 'drizzle-orm';
 import { tsRestHandler, TsRestHandler } from '@ts-rest/nest';
 import {
@@ -42,7 +43,7 @@ import { discountsTable } from '../db/schemas/discounts.schema.js';
 import {
   formattedDiscount,
   formattedPrice,
-  priceWithDiscount,
+  basePriceWithDiscount,
 } from '../shared/sql/templates.js';
 
 @Controller('favourite-products')
@@ -125,12 +126,12 @@ export class FavouriteProductsController {
           formattedPrice: formattedPrice(
             sql`${aggregatedSkusByVariantsData.minBasePrice}`,
           ),
-          minBasePriceWithDiscount: priceWithDiscount(
+          minBasePriceWithDiscount: basePriceWithDiscount(
             sql`${aggregatedSkusByVariantsData.minBasePrice}`,
             discountsSubQuery.discountType,
             discountsSubQuery.discountValue,
           ),
-          maxBasePriceWithDiscount: priceWithDiscount(
+          maxBasePriceWithDiscount: basePriceWithDiscount(
             sql`${aggregatedSkusByVariantsData.maxBasePrice}`,
             discountsSubQuery.discountType,
             discountsSubQuery.discountValue,
@@ -148,7 +149,7 @@ export class FavouriteProductsController {
             formattedDiscount: formattedDiscount(
               discountsSubQuery.discountType,
               discountsSubQuery.discountValue,
-            ),
+            ) as SQL<string>,
           },
         })
         .from(aggregatedSkusByVariantsData)

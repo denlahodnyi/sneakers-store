@@ -1,12 +1,13 @@
-import { CircleUserRoundIcon, HeartIcon, ShoppingBagIcon } from 'lucide-react';
+import { CircleUserRoundIcon, HeartIcon } from 'lucide-react';
 import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import CartTrigger from '~/app/(shop)/_ui/CartTrigger';
 import { LoginModal } from '~/features/authentication';
 import { FiltersSearchParam } from '~/features/filter-products';
 import { ProductsSearchForm } from '~/features/search-products';
-import { getClient, TOTAL_LIKES_TAG, type Session } from '~/shared/api';
+import { getServerClient, TOTAL_LIKES_TAG, type Session } from '~/shared/api';
 import {
   Avatar,
   AvatarFallback,
@@ -15,7 +16,7 @@ import {
   ContentContainer,
 } from '~/shared/ui';
 
-const client = getClient({ isRSC: true });
+const client = getServerClient({ isRSC: true });
 
 const getUserInitials = (name: string) => {
   const [firstName, lastName = ''] = name.split(' ');
@@ -51,16 +52,7 @@ async function MainHeader({ user }: { user: Session['user'] }) {
             <ProductsSearchForm />
           </div>
           <nav className="flex items-center justify-end space-x-3 md:space-x-6 lg:space-x-10">
-            <Button
-              asChild
-              className="flex h-auto flex-col items-center p-1 leading-none"
-              variant="ghost"
-            >
-              <Link href="#">
-                <ShoppingBagIcon className="h-6 w-6" />
-                Cart
-              </Link>
-            </Button>
+            <CartTrigger />
             {user?.id ? (
               <Button
                 asChild

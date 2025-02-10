@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
 import { FiltersSearchParam } from '~/features/filter-products';
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import { cn } from '~/shared/lib';
 import { ContentContainer } from '~/shared/ui';
 
-const client = getClient();
+const client = getServerClient();
 
 export default async function BrandsPage() {
   const { body } = await client.brands.getBrands({ query: { active: true } });

@@ -1,9 +1,9 @@
-import { HeartIcon, ShoppingBagIcon } from 'lucide-react';
+import { HeartIcon } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { cookies } from 'next/headers';
 
-import { auth, getClient } from '~/shared/api';
+import { auth, getServerClient } from '~/shared/api';
 import {
   Button,
   ContentContainer,
@@ -23,9 +23,13 @@ import {
 } from '../_ui';
 import Gallery from '../_ui/Gallery';
 import ScrollToTop from './TopScroll';
-import { ProductDetailsLikeButton } from '../_ui/product-details';
+import {
+  ProductDetailsAddToCartButton,
+  ProductDetailsLikeButton,
+  UnselectedSizeAlert,
+} from '../_ui/product-details';
 
-const client = getClient({ isRSC: true });
+const client = getServerClient({ isRSC: true });
 
 export default async function ProductPage(props: {
   params: Promise<{ productSlug: string }>;
@@ -114,10 +118,7 @@ export default async function ProductPage(props: {
           </div>
           <div className="flex items-center gap-2">
             {details.isInStock ? (
-              <Button className="w-full" size="lg">
-                <ShoppingBagIcon className="size-5" />
-                Add to cart
-              </Button>
+              <ProductDetailsAddToCartButton />
             ) : (
               <p className="pr-5 text-2xl text-zinc-500">Is out of stock</p>
             )}
@@ -134,6 +135,7 @@ export default async function ProductPage(props: {
               </LoginModal>
             )}
           </div>
+          <UnselectedSizeAlert />
         </div>
         <div className="md:col-span-2">
           <Tabs defaultValue="details">

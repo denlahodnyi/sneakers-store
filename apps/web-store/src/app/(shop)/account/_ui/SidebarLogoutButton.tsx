@@ -4,10 +4,12 @@ import { LogOutIcon } from 'lucide-react';
 import { startTransition, useActionState, useContext, useEffect } from 'react';
 
 import { logout, AuthContext } from '~/features/authentication';
+import { useCart } from '~/features/cart';
 import { Button, showErrorMessage, type ButtonProps } from '~/shared/ui';
 
 function SidebarLogoutButton({ ...rest }: ButtonProps) {
   const authCtx = useContext(AuthContext);
+  const { dispatch } = useCart();
   const [state, action, isPending] = useActionState(logout, undefined);
 
   useEffect(() => {
@@ -22,6 +24,7 @@ function SidebarLogoutButton({ ...rest }: ButtonProps) {
       onClick={() => {
         startTransition(() => {
           action();
+          dispatch({ type: 'reset_cart' });
         });
       }}
     >

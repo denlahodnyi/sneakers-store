@@ -1,9 +1,9 @@
 import NextAuth, { AuthError, type Session } from 'next-auth';
 import { getNextAuthConfig } from '@sneakers-store/next-auth';
 
-import { getClient } from './contractsClient';
+import { getServerClient } from './contractsServerClient';
 
-const client = getClient();
+const client = getServerClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth(
   getNextAuthConfig(client, 'store'),

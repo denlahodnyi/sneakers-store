@@ -2,7 +2,12 @@
 
 import type { Contract } from '@sneakers-store/contracts';
 import type { ClientInferResponseBody } from '@ts-rest/core';
-import { HeartIcon } from 'lucide-react';
+import {
+  HeartIcon,
+  ShoppingBagIcon,
+  LoaderCircleIcon,
+  CircleAlertIcon,
+} from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import {
   createContext,
@@ -15,6 +20,7 @@ import {
   type SetStateAction,
 } from 'react';
 
+import { AddToCartAction, useCart } from '~/features/cart';
 import { ProductLikeForm } from '~/features/like-products';
 import { cn } from '~/shared/lib';
 import { Button, type ButtonProps } from '~/shared/ui';
@@ -24,20 +30,39 @@ type ProductDetails = ClientInferResponseBody<
   200
 >['data']['details'];
 
+type SizeVariant = ProductDetails['sizes'][number];
+
 interface ProductSelectionDetailsContext {
-  selectedSizeId: number | null;
-  setSelectedSizeId: Dispatch<SetStateAction<number | null>>;
+  selectedSku: {
+    sizeId: SizeVariant['id'];
+    productSkuId: SizeVariant['productSkuId'];
+  } | null;
+  setSelectedSku: Dispatch<
+    SetStateAction<{
+      sizeId: SizeVariant['id'];
+      productSkuId: SizeVariant['productSkuId'];
+    } | null>
+  >;
   sizeVariants: ProductDetails['sizes'];
+  showUnselectedSizeAlert: boolean;
+  setShowUnselectedSizeAlert: Dispatch<SetStateAction<boolean>>;
 }
 
 const SIZE_PARAM = 'sizeId';
 
 export const ProductSelectionDetailsContext =
   createContext<ProductSelectionDetailsContext>({
-    selectedSizeId: null,
-    setSelectedSizeId: () => null,
+    selectedSku: null,
+    setSelectedSku: () => null,
     sizeVariants: [],
+    showUnselectedSizeAlert: false,
+    setShowUnselectedSizeAlert: () => undefined,
   });
+
+function useProductDetails() {
+  const ctx = useContext(ProductSelectionDetailsContext);
+  return ctx;
+}
 
 export function ProductSelectionDetailsProvider({
   children,
@@ -46,16 +71,35 @@ export function ProductSelectionDetailsProvider({
   sizeVariants: ProductDetails['sizes'];
 }) {
   const sp = useSearchParams();
-  const [selectedSizeId, setSelectedSizeId] = useState<
-    ProductSelectionDetailsContext['selectedSizeId']
-  >(
-    sp.has(SIZE_PARAM) && Number.isInteger(Number(sp.get(SIZE_PARAM)))
-      ? Number(sp.get(SIZE_PARAM))
-      : null,
-  );
+  const [selectedSku, setSelectedSku] = useState<
+    ProductSelectionDetailsContext['selectedSku']
+  >(() => {
+    const kindaSizeIdParam = Number(sp.get(SIZE_PARAM));
+    const predefinedSizeId =
+      Number.isInteger(kindaSizeIdParam) && kindaSizeIdParam > 0
+        ? kindaSizeIdParam
+        : null;
+    const sizeVariantByParam = sizeVariants.find(
+      (o) => o.id === predefinedSizeId,
+    );
+    return sizeVariantByParam
+      ? {
+          sizeId: sizeVariantByParam.id,
+          productSkuId: sizeVariantByParam.productSkuId,
+        }
+      : null;
+  });
+  const [showUnselectedSizeAlert, setShowUnselectedSizeAlert] = useState(false);
+
   return (
     <ProductSelectionDetailsContext.Provider
-      value={{ selectedSizeId, sizeVariants, setSelectedSizeId }}
+      value={{
+        selectedSku,
+        sizeVariants,
+        setSelectedSku,
+        showUnselectedSizeAlert,
+        setShowUnselectedSizeAlert,
+      }}
     >
       {children}
     </ProductSelectionDetailsContext.Provider>
@@ -71,13 +115,11 @@ export function ProductPrice({
   defaultPriceWithDiscount?: string;
   hasDiscount?: boolean;
 }) {
-  const { selectedSizeId, sizeVariants } = useContext(
-    ProductSelectionDetailsContext,
-  );
+  const { selectedSku, sizeVariants } = useProductDetails();
 
-  if (selectedSizeId) {
+  if (selectedSku?.sizeId) {
     const { formattedPrice, formattedPriceWithDiscount } =
-      sizeVariants.find((o) => o.id === selectedSizeId) || {};
+      sizeVariants.find((o) => o.id === selectedSku.sizeId) || {};
     const showDiscount = hasDiscount && formattedPriceWithDiscount;
     return (
       <>
@@ -111,12 +153,10 @@ export function ProductPrice({
 }
 
 export function SelectedSize({ defaultSize }: { defaultSize: string }) {
-  const { selectedSizeId, sizeVariants } = useContext(
-    ProductSelectionDetailsContext,
-  );
+  const { selectedSku, sizeVariants } = useProductDetails();
 
-  return selectedSizeId
-    ? sizeVariants.find((o) => o.id === selectedSizeId)?.size
+  return selectedSku
+    ? sizeVariants.find((o) => o.id === selectedSku.sizeId)?.size
     : defaultSize;
 }
 
@@ -128,15 +168,20 @@ export function SizeButton({
   children: ReactNode;
   sizeId: number;
 } & ButtonProps) {
-  const { selectedSizeId, setSelectedSizeId } = useContext(
-    ProductSelectionDetailsContext,
-  );
+  const { selectedSku, setSelectedSku, sizeVariants } = useProductDetails();
 
   return (
     <Button
       {...rest}
-      variant={selectedSizeId === sizeId ? 'default' : 'outline'}
-      onClick={() => setSelectedSizeId(sizeId)}
+      variant={selectedSku?.sizeId === sizeId ? 'default' : 'outline'}
+      onClick={() => {
+        const sizeVar = sizeVariants.find((o) => o.id === sizeId);
+        if (sizeVar)
+          setSelectedSku({
+            sizeId: sizeVar.id,
+            productSkuId: sizeVar.productSkuId,
+          });
+      }}
     >
       {children}
     </Button>
@@ -144,16 +189,26 @@ export function SizeButton({
 }
 
 export function LastItemsAlert(props: ComponentProps<'p'>) {
-  const { selectedSizeId, sizeVariants } = useContext(
-    ProductSelectionDetailsContext,
-  );
-  const qty = selectedSizeId
-    ? sizeVariants.find((o) => o.id === selectedSizeId)?.stockQty
+  const { selectedSku, sizeVariants } = useProductDetails();
+  const qty = selectedSku
+    ? sizeVariants.find((o) => o.id === selectedSku.sizeId)?.stockQty
     : 0;
 
   return qty && qty <= 5 ? (
     <p role="alert" {...props}>{`Only ${qty} left`}</p>
   ) : null;
+}
+
+export function UnselectedSizeAlert() {
+  const { showUnselectedSizeAlert } = useProductDetails();
+  return (
+    showUnselectedSizeAlert && (
+      <p className="text-destructive">
+        <CircleAlertIcon aria-hidden className="mr-1 inline size-4" />
+        <span className="align-middle">Please, choose a size</span>
+      </p>
+    )
+  );
 }
 
 export function ProductDetailsLikeButton({
@@ -178,5 +233,46 @@ export function ProductDetailsLikeButton({
         </Button>
       )}
     </ProductLikeForm>
+  );
+}
+
+export function ProductDetailsAddToCartButton() {
+  const { selectedSku, sizeVariants, setShowUnselectedSizeAlert } =
+    useProductDetails();
+  const { cart } = useCart();
+  const sizeVar = sizeVariants.find((o) => o.id === selectedSku?.sizeId);
+  const cartItem = cart.items.find(
+    (o) => o.productSkuId === selectedSku?.productSkuId,
+  );
+  const isLimit =
+    sizeVar?.stockQty !== undefined &&
+    cartItem?.qty !== undefined &&
+    sizeVar?.stockQty <= cartItem?.qty;
+
+  return (
+    <AddToCartAction productSkuId={selectedSku?.productSkuId || null}>
+      {(action, pending) => (
+        <Button
+          className="w-full"
+          disabled={pending || isLimit}
+          size="lg"
+          onClick={() => {
+            if (!selectedSku) {
+              setShowUnselectedSizeAlert(true);
+              return;
+            }
+            setShowUnselectedSizeAlert(false);
+            action();
+          }}
+        >
+          {pending ? (
+            <LoaderCircleIcon className="animate-spin" />
+          ) : (
+            <ShoppingBagIcon className="size-5" />
+          )}
+          Add to cart
+        </Button>
+      )}
+    </AddToCartAction>
   );
 }

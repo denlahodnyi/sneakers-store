@@ -52,7 +52,7 @@ import createPaginationDto from '../shared/libs/pagination/createPaginationDto.j
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
 import { INVALID_QUERY } from '../shared/constants.js';
 import { discountsTable } from '../db/schemas/discounts.schema.js';
-import { priceWithDiscount } from '../shared/sql/templates.js';
+import { basePriceWithDiscount } from '../shared/sql/templates.js';
 import type { InferRecordDataTypes } from '../drizzle/drizzle.lib.js';
 import type { UserEntity } from '../db/schemas/user.schema.js';
 import { User } from '../auth/user.decorator.js';
@@ -811,7 +811,7 @@ export class CatalogController {
       .select({
         product_skus: {
           ...getTableColumns(productSkusTable),
-          basePriceWithDiscount: priceWithDiscount(
+          basePriceWithDiscount: basePriceWithDiscount(
             productSkusTable.basePrice,
             variantWithFullProduct.discounts?.discountType || null,
             variantWithFullProduct.discounts?.discountValue || null,
@@ -862,12 +862,12 @@ export class CatalogController {
         product_variants: productVariantsTable,
         aggregated_variants: aggregatedVariantsQuery._.selectedFields,
         colors: getTableColumns(colorsTable),
-        minBasePriceWithDiscount: priceWithDiscount(
+        minBasePriceWithDiscount: basePriceWithDiscount(
           sql`${aggregatedVariantsQuery.minPrice}`,
           variantWithFullProduct.discounts?.discountType || null,
           variantWithFullProduct.discounts?.discountValue || null,
         ),
-        maxBasePriceWithDiscount: priceWithDiscount(
+        maxBasePriceWithDiscount: basePriceWithDiscount(
           sql`${aggregatedVariantsQuery.maxPrice}`,
           variantWithFullProduct.discounts?.discountType || null,
           variantWithFullProduct.discounts?.discountValue || null,
@@ -956,6 +956,7 @@ export class CatalogController {
       category: variantWithFullProduct.categories,
       brand: variantWithFullProduct.brands,
       sizes: currentVarSkus.map(({ sizes, product_skus }) => ({
+        productSkuId: product_skus.id,
         id: sizes.id,
         size: sizes.size,
         system: sizes.system,
@@ -1206,7 +1207,7 @@ function getDistinctVariantsQuery(
         `
         .mapWith(Number)
         .as('max_skus_price_by_var'),
-      minBasePriceWithDiscount: priceWithDiscount(
+      minBasePriceWithDiscount: basePriceWithDiscount(
         sql`
           (${db
             .with(skusCteSubQuery)
@@ -1216,7 +1217,7 @@ function getDistinctVariantsQuery(
         discountsSubQuery.discountType,
         discountsSubQuery.discountValue,
       ).as('min_price_with_disc'),
-      maxBasePriceWithDiscount: priceWithDiscount(
+      maxBasePriceWithDiscount: basePriceWithDiscount(
         sql`
           (${db
             .with(skusCteSubQuery)

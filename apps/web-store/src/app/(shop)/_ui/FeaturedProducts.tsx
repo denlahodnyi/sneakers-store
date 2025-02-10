@@ -1,8 +1,8 @@
 'use server';
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import { ProductCard } from '~/widgets/product-card';
 
-const client = getClient();
+const client = getServerClient();
 
 export default async function FeaturedProducts() {
   const { body } = await client.catalog.getProducts({

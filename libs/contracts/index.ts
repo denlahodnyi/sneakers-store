@@ -15,6 +15,7 @@ import { catalogContract } from './src/catalog.contract.js';
 import { productImgContract } from './src/product-image.contract.js';
 import { discountContract } from './src/discount.contract.js';
 import { favProductsContract } from './src/favourite-products.contract.js';
+import { cartContract } from './src/cart.contract.js';
 
 const c = initContract();
 
@@ -42,6 +43,7 @@ export const contract = c.router(
     catalog: catalogContract,
     discount: discountContract,
     favoriteProducts: favProductsContract,
+    cart: cartContract,
   },
   { strictStatusCodes: true }
 );
@@ -60,3 +62,4 @@ export * from './src/dto/size.dto.js';
 export * from './src/dto/product.dto.js';
 export * from './src/dto/catalog.dto.js';
 export * from './src/dto/discount.dto.js';
+export * from './src/dto/cart.dto.js';

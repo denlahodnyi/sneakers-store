@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import FavoriteProductCard from './_ui/FavoriteProductCard';
 
-const client = getClient({ isRSC: true });
+const client = getServerClient({ isRSC: true });
 
 async function FavouritesPage() {
   const cookieStore = await cookies();

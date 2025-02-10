@@ -7,7 +7,7 @@ import {
   SORT_SEARCH_PARAM,
   SortDropdown,
 } from '~/features/filter-products';
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import { Button, ContentContainer } from '~/shared/ui';
 import { ProductCard } from '~/widgets/product-card';
 import {
@@ -16,7 +16,7 @@ import {
   MobileFiltersDrawer,
 } from '../_ui';
 
-const client = getClient();
+const client = getServerClient();
 
 type Params = Promise<{ category?: string[] }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
