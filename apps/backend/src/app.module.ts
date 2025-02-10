@@ -23,6 +23,7 @@ import { ProductImagesModule } from './product-images/product-images.module.js';
 import { DiscountsModule } from './discounts/discounts.module.js';
 import { FavouriteProductsModule } from './favourite-products/favourite-products.module.js';
 import { SessionMiddleware } from './auth/session.middleware.js';
+import { CartsModule } from './carts/carts.module.js';
 
 const prodEnvs = ['.env.production.local', '.env.production', '.env'];
 const devEnvs = ['.env.development.local', '.env.development', '.env'];
@@ -60,6 +61,7 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
     ProductImagesModule,
     DiscountsModule,
     FavouriteProductsModule,
+    CartsModule,
   ],
   exports: [],
   controllers: [AppController],

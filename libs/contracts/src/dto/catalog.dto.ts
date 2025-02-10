@@ -153,6 +153,7 @@ export interface CatalogProductDetailsDto {
     isInStock: boolean;
   })[];
   sizes: (Pick<SizeResponseDto, 'id' | 'size' | 'system'> & {
+    productSkuId: string;
     basePrice: number;
     basePriceWithDiscount: number;
     price: number;

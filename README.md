@@ -35,9 +35,9 @@ pnpm dev
 - [x] products and filters
 - [x] featured products
 - [x] search by products
-- [ ] cart
+- [x] cart
 - [ ] payment and orders
-- [ ] favorites
+- [x] favorites
 - [ ] rating and comments
 - [ ] simple analytics in dashboard
 - [ ] improve build process

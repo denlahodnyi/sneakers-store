@@ -34,7 +34,7 @@ const selection = {
   formattedDiscount: formattedDiscount(
     discountsTable.discountType,
     discountsTable.discountValue,
-  ),
+  ) as SQL<string>,
 };
 
 @Controller('discounts')

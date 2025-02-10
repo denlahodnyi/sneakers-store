@@ -1,8 +1,8 @@
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import { ContentContainer } from '~/shared/ui';
 import { ProductSearchResultItem } from './_ui';
 
-const client = getClient({ isRSC: true });
+const client = getServerClient({ isRSC: true });
 
 export default async function SearchPage({
   searchParams,

@@ -3,9 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 
-const client = getClient();
+const client = getServerClient();
 
 export async function updateUserServerFn(
   prevState: unknown,

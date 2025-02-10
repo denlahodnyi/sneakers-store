@@ -1,5 +1,5 @@
 'use server';
-import { getClient } from '~/shared/api';
+import { getServerClient } from '~/shared/api';
 import {
   Carousel,
   CarouselContent,
@@ -9,7 +9,7 @@ import {
 } from '~/shared/ui';
 import { ProductCard } from '~/widgets/product-card';
 
-const client = getClient();
+const client = getServerClient();
 
 export default async function BestOffersList() {
   const { body } = await client.catalog.getProducts({

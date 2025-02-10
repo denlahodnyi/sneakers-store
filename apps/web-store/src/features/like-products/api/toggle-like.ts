@@ -3,9 +3,9 @@
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
-import { getClient, TOTAL_LIKES_TAG } from '~/shared/api';
+import { getServerClient, TOTAL_LIKES_TAG } from '~/shared/api';
 
-const client = getClient();
+const client = getServerClient();
 
 export const toggleLike = async (productVarId: string, isLiked: boolean) => {
   const cookieStore = await cookies();
