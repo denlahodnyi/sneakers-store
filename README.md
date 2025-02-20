@@ -36,7 +36,7 @@ pnpm dev
 - [x] featured products
 - [x] search by products
 - [x] cart
-- [ ] payment and orders
+- [x] payment and orders
 - [x] favorites
 - [ ] rating and comments
 - [ ] simple analytics in dashboard

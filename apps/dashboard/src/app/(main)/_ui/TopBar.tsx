@@ -10,6 +10,7 @@ import {
   MenuOutlined,
   Palette,
   People,
+  Receipt,
   StraightenOutlined,
 } from '@mui/icons-material';
 import {
@@ -40,6 +41,11 @@ const links = [
     href: '/users',
     label: 'Users',
     icon: <People />,
+  },
+  {
+    href: '/orders',
+    label: 'Orders',
+    icon: <Receipt />,
   },
   {
     href: '/products',

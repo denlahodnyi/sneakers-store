@@ -1,5 +1,13 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 import { booleanString } from './custom-transformers.js';
 
 export const DiscountType = {
@@ -26,7 +34,8 @@ export class DiscountCreateDto {
   @IsEnum(DiscountType)
   discountType: DiscountType;
 
-  @IsInt()
+  @IsNumber()
+  @IsPositive()
   discountValue: number;
 
   @IsOptional()
@@ -47,7 +56,8 @@ export class DiscountUpdateDto {
   discountType?: DiscountType;
 
   @IsOptional()
-  @IsInt()
+  @IsNumber()
+  @IsPositive()
   discountValue?: number;
 
   @IsOptional()

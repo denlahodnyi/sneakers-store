@@ -12,6 +12,7 @@ import {
   IsDateString,
   IsEmail,
   IsEnum,
+  IsPhoneNumber,
   IsNotEmpty,
   IsOptional,
   IsUUID,
@@ -64,6 +65,10 @@ export class UserCreateDto {
   @IsOptional()
   @IsEnum(Role)
   role?: Role | null;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  phone?: string | null;
 }
 
 export class UserUpdateDto {
@@ -96,6 +101,10 @@ export class UserUpdateDto {
   @IsOptional()
   @IsEnum(Role)
   role?: Role | null;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  phone?: string | null;
 }
 
 export class UserSignInDto {
@@ -121,4 +130,5 @@ export class UserResponseDto {
   emailVerified: string | null;
   image: string | null;
   role: null | 'admin' | 'super_admin';
+  phone: string | null;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, type PropsWithChildren } from 'react';
+import { createContext, useContext, type PropsWithChildren } from 'react';
 
 import type { Session } from '~/shared/api';
 
@@ -13,4 +13,11 @@ export function AuthProvider({
   value,
 }: PropsWithChildren & { value: AuthContextValue }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (typeof ctx === 'undefined')
+    throw new Error('useAuth must be used inside AuthProvider');
+  return ctx;
 }

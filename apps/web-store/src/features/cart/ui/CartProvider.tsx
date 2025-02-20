@@ -48,10 +48,13 @@ const initCartState: Cart = {
   id: null,
   items: [],
   price: 0,
+  priceInCents: 0,
   formattedPrice: '$0',
   totalDiscount: 0,
-  formattedTotalDiscount: null,
+  totalPriceInCents: 0,
   totalPrice: 0,
+  totalDiscountInCents: null,
+  formattedTotalDiscount: null,
   formattedTotalPrice: '$0',
   totalQty: 0,
 };
@@ -77,6 +80,10 @@ export const CartContext = createContext<{
   addToCart: (productSkuId: string) => Promise<void>;
   removeFromCart: (productSkuId: string) => Promise<void>;
   clearCart: () => Promise<void>;
+  setupCart: (
+    userCart?: CartResponseDto | null,
+    isAuthed?: boolean,
+  ) => Promise<void>;
 }>({
   cart: initCartState,
   showCart: false,
@@ -85,6 +92,7 @@ export const CartContext = createContext<{
   addToCart: () => Promise.resolve(),
   removeFromCart: () => Promise.resolve(),
   clearCart: () => Promise.resolve(),
+  setupCart: () => Promise.resolve(),
 });
 
 export function CartProvider({
@@ -132,14 +140,14 @@ export function CartProvider({
     }
   };
 
-  useEffect(() => {
-    const setupCart = async () => {
+  const setupCart = useCallback(
+    async (userCart?: CartResponseDto | null, isAuthed?: boolean) => {
       const localCartItems = getParsedLocalCartItems();
-      if (user?.id && userCart?.id) {
+      if (isAuthed) {
         if (localCartItems) {
           const { success, cart } = await syncCarts(
-            userCart.id,
             localCartItems,
+            userCart?.id,
           );
           if (success && cart) {
             localStorage.removeItem(STORAGE_KEY);
@@ -147,16 +155,19 @@ export function CartProvider({
           } else {
             console.error(`Cannot merge carts`);
           }
-        } else {
+        } else if (userCart) {
           dispatch({ type: 'rewrite_cart', cart: userCart });
         }
       } else if (localCartItems) {
         generateCartFromItems(localCartItems);
       }
-    };
+    },
+    [],
+  );
 
-    setupCart();
-  }, [user?.id, userCart]);
+  useEffect(() => {
+    setupCart(userCart, Boolean(user?.id));
+  }, [setupCart, user?.id, userCart]);
 
   const addToCart = useCallback(
     async (productSkuId: string) => {
@@ -257,6 +268,7 @@ export function CartProvider({
         removeFromCart,
         setShowCart,
         showCart,
+        setupCart,
       }}
     >
       {children}

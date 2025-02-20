@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react';
+import Link from 'next/link';
 
 import {
   Button,
@@ -17,12 +18,13 @@ import ClearCartAction from './ClearCartAction';
 
 export default function CartDrawer({ children }: PropsWithChildren) {
   const { cart, showCart, setShowCart } = useCart();
+
   return (
     <Drawer direction="right" open={showCart} onOpenChange={setShowCart}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent
         aria-describedby=""
-        className="bottom-0 left-auto right-0 top-0 mt-0 w-[500px] rounded-none"
+        className="bottom-0 left-auto right-0 top-0 mt-0 w-full rounded-none sm:w-[500px]"
         overlayProps={{ className: 'bg-black/20' }}
       >
         <DrawerHeader>
@@ -73,7 +75,16 @@ export default function CartDrawer({ children }: PropsWithChildren) {
           ))}
         </div>
         <DrawerFooter>
-          <Button>Checkout</Button>
+          {cart.items.length > 0 && (
+            <Button
+              asChild
+              onClick={() => {
+                setShowCart(false);
+              }}
+            >
+              <Link href="/checkout">Checkout</Link>
+            </Button>
+          )}
           <DrawerClose asChild>
             <Button variant="secondary">Close</Button>
           </DrawerClose>

@@ -39,7 +39,11 @@ async function MainHeader({ user }: { user: Session['user'] }) {
     <header className="sticky top-0 z-10 bg-background">
       <ContentContainer className="p-0 sm:p-0">
         <div className="grid-rows-[repeat(3, auto)] md:grid-rows-[repeat(2, auto)] mx-3 grid grid-cols-2 gap-x-2 gap-y-4 border-b border-border pb-2 pt-3 sm:mx-10 sm:pb-4 sm:pt-5 md:grid-cols-3 md:gap-y-8">
-          <Link aria-label="To home page" href="/">
+          <Link
+            aria-label="To home page"
+            className="justify-self-start"
+            href="/"
+          >
             <Image
               alt=""
               className="size-[60px] rounded-sm"

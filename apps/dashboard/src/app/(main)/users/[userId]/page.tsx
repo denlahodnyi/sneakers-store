@@ -46,7 +46,11 @@ async function UserPage({ params }: { params: Promise<{ userId: string }> }) {
       </Attribute>
       <Attribute>
         <AttributeName>Email verified</AttributeName>
-        <AttributeValue>{user.emailVerified}</AttributeValue>
+        <AttributeValue>{user.emailVerified || 'N/A'}</AttributeValue>
+      </Attribute>
+      <Attribute>
+        <AttributeName>Phone</AttributeName>
+        <AttributeValue>{user.phone}</AttributeValue>
       </Attribute>
       <Attribute>
         <AttributeName>Role</AttributeName>

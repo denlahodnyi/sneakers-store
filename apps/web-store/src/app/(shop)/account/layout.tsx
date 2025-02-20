@@ -11,7 +11,7 @@ async function AccountLayout({ children }: PropsWithChildren) {
   return (
     <ContentContainer className="flex w-full flex-1 flex-col sm:flex-row">
       <div className="relative w-full sm:contents sm:w-auto">
-        <Button asChild className="w-full sm:hidden" variant="outline">
+        <Button asChild className="mb-4 w-full sm:hidden" variant="outline">
           <label className="peer" htmlFor="foo">
             Menu
             <input className="sr-only" id="foo" type="checkbox" />
