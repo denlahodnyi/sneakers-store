@@ -43,6 +43,13 @@
       "when": 1739211868266,
       "tag": "0005_products_cart",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1740072175066,
+      "tag": "0006_orders",
+      "breakpoints": true
     }
   ]
 }

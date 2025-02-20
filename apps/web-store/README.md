@@ -15,7 +15,15 @@ Google auth configuration:
    origins
 4. Add <http://localhost:3001/api/auth/callback/google> and
    <http://localhost:3002/api/auth/callback/google> to Authorized redirect URIs
-5. Add Client ID (as `AUTH_GOOGLE_ID`) and Client secret (as `AUTH_GOOGLE_SECRET`) to `.env`
+5. Add Client ID (as `AUTH_GOOGLE_ID`) and Client secret (as
+   `AUTH_GOOGLE_SECRET`) to `.env`
+
+Stripe configuration:
+
+1. Create Stripe account. Add Publishable key and Secret key to `.env`.
+2. Get Stripe webhook secret
+   ([docs](https://docs.stripe.com/webhooks/quickstart)). During development
+   enable listening for stripe events in your webhook.
 
 Build API contract in `/lib/contracts` if you didn't.
 

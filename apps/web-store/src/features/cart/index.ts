@@ -4,3 +4,4 @@ export { default as CartDrawer } from './ui/CartDrawer';
 export { default as AddToCartAction } from './ui/AddToCartAction';
 export { default as RemoveFromCartAction } from './ui/RemoveFromCartAction';
 export { default as ClearCartAction } from './ui/ClearCartAction';
+export { default as CartItem } from './ui/CartItem';

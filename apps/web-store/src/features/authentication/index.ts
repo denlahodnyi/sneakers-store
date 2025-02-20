@@ -1,2 +1,8 @@
-export { LoginForm, LoginModal, AuthContext, AuthProvider } from './ui';
+export {
+  LoginForm,
+  LoginModal,
+  AuthContext,
+  AuthProvider,
+  useAuth,
+} from './ui';
 export { signInWithGoogle, logout } from './api';

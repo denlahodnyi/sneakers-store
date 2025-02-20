@@ -119,7 +119,9 @@ export class CartsService {
       CartResponseDto['items'][number],
       | 'isInStock'
       | 'formattedPriceWithDiscount'
+      | 'priceInCents'
       | 'finalPrice'
+      | 'finalPriceInCents'
       | 'formattedFinalPrice'
     >[],
   ) {
@@ -129,9 +131,11 @@ export class CartsService {
       return {
         ...it,
         isInStock: it.stockQty > 0,
+        priceInCents: it.price * PRICE_MINOR_UNITS,
         priceWithDiscount,
         formattedPriceWithDiscount: `$${finalPrice}`,
         finalPrice: finalPrice,
+        finalPriceInCents: it.priceWithDiscount,
         formattedFinalPrice: `$${finalPrice}`,
       };
     });
@@ -139,6 +143,7 @@ export class CartsService {
 
   getFormattedCartUsingFullItems(
     fullItems: CartResponseDto['items'],
+    overwriteFields?: Partial<CartResponseDto>,
   ): CartResponseDto {
     const { totalQty, price, totalPrice } = fullItems.reduce(
       (prev, cur) => {
@@ -152,7 +157,7 @@ export class CartsService {
       },
       {
         totalQty: 0,
-        price: 0, // total base price (excluding discount)
+        price: 0, // price (excluding discount)
         totalPrice: 0, // total price (including discount)
       },
     );
@@ -162,22 +167,25 @@ export class CartsService {
       items: fullItems,
       totalQty,
       price,
+      priceInCents: price * PRICE_MINOR_UNITS,
       totalPrice,
-      totalDiscount: totalDiscount,
+      totalPriceInCents: totalPrice * PRICE_MINOR_UNITS,
+      totalDiscount: totalDiscount > 0 ? totalDiscount : null,
+      totalDiscountInCents:
+        totalDiscount > 0 ? totalDiscount * PRICE_MINOR_UNITS : null,
       formattedTotalDiscount: totalDiscount > 0 ? `$${totalDiscount}` : null,
       formattedPrice: `$${price}`,
       formattedTotalPrice: `$${totalPrice}`,
+      ...overwriteFields,
     };
   }
 
   async getFullUserCartItems(
-    userId: string,
+    cartId: string,
   ): Promise<CartResponseDto['items']> {
     const { db } = this.drizzleService;
-    const userCartQuery = this.getUserCartQuery(userId).as('user_cart');
 
     const selection = {
-      cartId: userCartQuery.cartId,
       id: cartItemsTable.id,
       qty: cartItemsTable.qty,
       ...this.getBaseCartItemsSelection(),
@@ -188,17 +196,14 @@ export class CartsService {
     const items = (await this.buildQueryWithFullItems(
       db
         .select(selection)
-        .from(userCartQuery)
-        .innerJoin(
-          cartItemsTable,
-          eq(cartItemsTable.cartId, userCartQuery.cartId),
-        )
+        .from(cartItemsTable)
         .innerJoin(
           productSkusTable,
           eq(cartItemsTable.productSkuId, productSkusTable.id),
         )
         .where(
           and(
+            eq(cartItemsTable.cartId, cartId),
             eq(productsTable.isActive, true),
             eq(sizesTable.isActive, true),
             eq(colorsTable.isActive, true),
@@ -207,12 +212,18 @@ export class CartsService {
         .$dynamic(),
     )) as unknown as SelectionResult;
 
-    return this.formatItems(items);
+    return this.formatItems(items.map((it) => ({ ...it, cartId })));
   }
 
   async getFullUserCart(userId: string): Promise<CartResponseDto> {
-    const items = await this.getFullUserCartItems(userId);
-    return this.getFormattedCartUsingFullItems(items);
+    const userCartQuery = this.getUserCartQuery(userId).as('user_cart');
+    const [userCart = null] = await this.drizzleService.db
+      .select()
+      .from(userCartQuery);
+    const items = userCart?.cartId
+      ? await this.getFullUserCartItems(userCart.cartId)
+      : [];
+    return this.getFormattedCartUsingFullItems(items, { id: userCart?.cartId });
   }
 
   async getCartFromItems(

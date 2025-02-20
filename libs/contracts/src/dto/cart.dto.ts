@@ -49,6 +49,7 @@ interface CartItem {
   stockQty: ProductSkuResponseDto['stockQty'];
   isInStock: boolean;
   price: number;
+  priceInCents: number;
   formattedPrice: string;
   discountValue: null | DiscountResponseDto['discountValue'];
   discountType: null | DiscountResponseDto['discountType'];
@@ -56,6 +57,7 @@ interface CartItem {
   priceWithDiscount: number;
   formattedPriceWithDiscount: string;
   finalPrice: number;
+  finalPriceInCents: number;
   formattedFinalPrice: string;
   name: string;
   slug: string;
@@ -72,9 +74,12 @@ export interface CartResponseDto {
   items: CartItem[];
   totalQty: number;
   price: number;
+  priceInCents: number;
   formattedPrice: string;
   totalDiscount: null | number; // fixed value, not percentages
+  totalDiscountInCents: null | number; // fixed value, not percentages
   formattedTotalDiscount: null | string;
   totalPrice: number;
+  totalPriceInCents: number;
   formattedTotalPrice: string;
 }

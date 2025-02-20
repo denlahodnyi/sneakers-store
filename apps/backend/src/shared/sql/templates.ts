@@ -1,6 +1,9 @@
 import { DiscountType, PRICE_MINOR_UNITS } from '@sneakers-store/contracts';
 import { sql, type Column, type SQL } from 'drizzle-orm';
 
+export const priceFromMinorUnits = (column: Column | SQL) =>
+  sql<number>`ROUND(${column}::numeric / ${PRICE_MINOR_UNITS}, 2)`;
+
 export const formattedPrice = (column: Column | SQL) =>
   // Truncate zeros after decimal point (450 instead of 450.00), otherwise leave two numbers (450.99)
   sql<string>`

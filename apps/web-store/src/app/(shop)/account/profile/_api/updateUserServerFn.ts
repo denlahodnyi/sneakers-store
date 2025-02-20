@@ -1,5 +1,9 @@
 'use server';
 
+import type {
+  inferDtoErrors,
+  UserResponseDto,
+} from '@sneakers-store/contracts';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
@@ -12,14 +16,12 @@ export async function updateUserServerFn(
   formData: FormData,
 ) {
   const id = formData.get('id') as string;
-  const firstName = formData.get('firstName') as string;
-  const lastName = formData.get('lastName') as string;
-  // const email = formData.get('email') as string;
-  const name = lastName ? `${firstName} ${lastName}` : firstName;
+  const name = formData.get('name') as string;
+  const phone = formData.get('phone') as string;
   const cookiesStr = (await cookies()).toString();
 
   const { body } = await client.users.updateUser({
-    body: { name, id },
+    body: { name, id, phone: phone || null },
     params: { userId: id },
     extraHeaders: {
       Cookie: cookiesStr,
@@ -39,7 +41,7 @@ export async function updateUserServerFn(
   return {
     success: false,
     data: null,
-    errors: body.errors,
+    errors: body.errors as inferDtoErrors<UserResponseDto>,
     clientMessage: body.message,
     _ts: Date.now().valueOf(),
   };

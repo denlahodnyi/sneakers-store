@@ -1,17 +1,11 @@
 'use client';
 
-import {
-  startTransition,
-  useActionState,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react';
+import { startTransition, useActionState, useEffect, useRef } from 'react';
 import { LoaderIcon } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { AuthContext } from '~/features/authentication';
+import { useAuth } from '~/features/authentication';
 import {
   Button,
   Form,
@@ -22,6 +16,7 @@ import {
   FormMessage,
   Input,
   Label,
+  PhoneInput,
   showErrorMessage,
   showSuccessMessage,
   useForm,
@@ -32,20 +27,15 @@ import { updateUserServerFn } from '../_api';
 const formSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().optional(),
+  phone: z.string(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
-const splitUserName = (name: string) => {
-  return name.split(' ');
-};
-
 function ProfileForm() {
-  const authCtx = useContext(AuthContext);
+  const authCtx = useAuth();
   const user = authCtx?.user;
-  const [firstName, lastName] = user?.name
-    ? splitUserName(user.name)
-    : ['', ''];
+  const [firstName, lastName] = user?.name ? user.name.split(' ') : ['', ''];
   const [actionState, submitAction, actionLoading] = useActionState(
     updateUserServerFn,
     undefined,
@@ -56,33 +46,53 @@ function ProfileForm() {
     defaultValues: {
       firstName,
       lastName,
+      phone: user?.phone || '',
     },
+    reValidateMode: 'onSubmit',
   });
-  const { isDirty } = form.formState;
+  const {
+    formState: { isDirty },
+    setError,
+    clearErrors,
+  } = form;
 
   useEffect(() => {
     if (actionState && actionState.success === false) {
       if (actionState.errors) {
         if (actionState.errors.name) {
-          form.setError('firstName', {
-            message: (actionState.errors.name as string[])[0],
+          setError('firstName', {
+            message: actionState.errors.name[0],
           });
-          form.setError('lastName', {
-            message: (actionState.errors.name as string[])[0],
+          setError('lastName', {
+            message: actionState.errors.name[0],
           });
         }
-      } else if (actionState.clientMessage) {
+        if (actionState.errors.phone) {
+          setError('phone', {
+            message: actionState.errors.phone[0],
+            type: 'required',
+          });
+        }
+      }
+      if (actionState.clientMessage) {
         showErrorMessage(actionState.clientMessage);
       }
     } else if (actionState?.success) {
       showSuccessMessage('Profile was successfully updated');
     }
-  }, [actionState]);
+  }, [actionState, setError]);
 
-  const onSubmit: SubmitHandler<FormSchema> = () => {
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
     startTransition(() => {
       if (formRef.current) {
-        submitAction(new FormData(formRef.current));
+        const name = data.lastName
+          ? `${data.firstName} ${data.lastName}`
+          : data.firstName;
+        const fd = new FormData();
+        fd.set('id', user?.id as string);
+        fd.set('name', name);
+        fd.set('phone', data.phone);
+        submitAction(fd);
       }
     });
   };
@@ -120,6 +130,51 @@ function ProfileForm() {
               <FormLabel>Last name</FormLabel>
               <FormControl>
                 <Input placeholder="Dow" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({
+            field: { ref, name, value, onChange, onBlur },
+            fieldState,
+          }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <PhoneInput
+                  ref={(intTel) => {
+                    ref(intTel?.getInput());
+                  }}
+                  initOptions={{ containerClass: 'w-full' }}
+                  initialValue={value}
+                  inputProps={{ name, onBlur, required: false }}
+                  onChangeNumber={(v) => {
+                    if (value !== v) onChange(v);
+                  }}
+                  onChangeValidity={(isValid, message) => {
+                    if (
+                      !isValid &&
+                      fieldState.isDirty &&
+                      fieldState.error?.message !== message
+                    ) {
+                      setError('phone', {
+                        message: message || 'Invalid',
+                        type: 'phoneInputValidation',
+                      });
+                    } else if (
+                      isValid &&
+                      fieldState.invalid &&
+                      // Clear only error caused by input component itself
+                      fieldState.error?.type === 'phoneInputValidation'
+                    ) {
+                      clearErrors('phone');
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

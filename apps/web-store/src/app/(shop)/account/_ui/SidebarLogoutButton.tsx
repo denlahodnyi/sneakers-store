@@ -1,14 +1,14 @@
 'use client';
 
 import { LogOutIcon } from 'lucide-react';
-import { startTransition, useActionState, useContext, useEffect } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 
-import { logout, AuthContext } from '~/features/authentication';
+import { logout, useAuth } from '~/features/authentication';
 import { useCart } from '~/features/cart';
 import { Button, showErrorMessage, type ButtonProps } from '~/shared/ui';
 
 function SidebarLogoutButton({ ...rest }: ButtonProps) {
-  const authCtx = useContext(AuthContext);
+  const authCtx = useAuth();
   const { dispatch } = useCart();
   const [state, action, isPending] = useActionState(logout, undefined);
 

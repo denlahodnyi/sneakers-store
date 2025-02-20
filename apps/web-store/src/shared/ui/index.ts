@@ -86,3 +86,4 @@ export {
   CarouselPrevious,
   CarouselNext,
 } from './carousel';
+export { PhoneInput, type PhoneInputProps } from './phone-input';

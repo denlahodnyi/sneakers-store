@@ -19,7 +19,14 @@ function LoginPage() {
       if (isRedirectError(error)) {
         throw error;
       } else if (error instanceof AuthError) {
-        return { message: error.cause?.err?.message || 'Some error occurred' };
+        const errorDetails = error.cause as
+          | { err?: Error; errors: never }
+          | { errors?: Record<string, string[]>; err: never };
+        return {
+          message: error.cause?.err?.message || 'Some error occurred',
+          errors: errorDetails?.errors,
+          _ts: Date.now().valueOf(),
+        };
       }
     }
   };

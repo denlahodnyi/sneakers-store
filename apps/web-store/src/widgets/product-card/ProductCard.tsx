@@ -4,12 +4,12 @@ import { HeartIcon } from 'lucide-react';
 // import { ShoppingBagIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '~/shared/lib';
 // import { Button } from '~/shared/ui';
 import { Button, getConicGradientFromHexes } from '~/shared/ui';
-import { AuthContext, LoginModal } from '../../features/authentication';
+import { LoginModal, useAuth } from '../../features/authentication';
 import { ProductLikeForm } from '../../features/like-products';
 
 export default function ProductCard({
@@ -18,7 +18,7 @@ export default function ProductCard({
   product: CatalogResponseDto;
 }) {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
-  const session = useContext(AuthContext);
+  const session = useAuth();
 
   return (
     <article

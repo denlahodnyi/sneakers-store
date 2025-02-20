@@ -16,6 +16,7 @@ export const genderEnum = t.pgEnum('gender', [
   Gender.KIDS,
 ]);
 
+// TODO: make brand, category, size to be not null. Fix dto's
 export const productsTable = t.pgTable(
   'products',
   {

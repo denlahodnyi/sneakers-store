@@ -28,6 +28,7 @@ import { cartItemsTable, cartsTable } from '../db/schemas/cart.schema.js';
 import { CartsService } from './carts.service.js';
 import { ConfiguredValidationPipe } from '../shared/pipes/configured-validation.pipe.js';
 import { productSkusTable } from '../db/schemas/product.schema.js';
+import { Public } from '../auth/public.decorator.js';
 
 @Controller('carts')
 export class CartsController {
@@ -52,8 +53,8 @@ export class CartsController {
     });
   }
 
-  @Delete()
-  @UseGuards(AuthGuard)
+  @Delete(':cartId')
+  @Public()
   @TsRestHandler(c.cart.deleteCart)
   deleteCart(@Param('cartId') cartId: string) {
     return tsRestHandler(c.cart.deleteCart, async () => {
@@ -74,7 +75,6 @@ export class CartsController {
   getCart(@User() user: UserEntity) {
     return tsRestHandler(c.cart.getUserCart, async () => {
       const cart = await this.cartsService.getFullUserCart(user.id);
-
       return {
         status: 200,
         body: {
@@ -283,7 +283,7 @@ export class CartsController {
   }
 
   @Delete(':cartId/items/command/deleteAll')
-  @UseGuards(AuthGuard)
+  @Public()
   @TsRestHandler(c.cart.deleteAllCartItems)
   deleteAllCartItems(@Param('cartId') cartId: string) {
     return tsRestHandler(c.cart.deleteAllCartItems, async () => {

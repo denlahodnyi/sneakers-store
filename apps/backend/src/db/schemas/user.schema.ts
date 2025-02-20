@@ -23,6 +23,7 @@ export const usersTable = t.pgTable('users', {
   image: t.text(),
   password: t.varchar({ length: 255 }),
   role: rolesEnum(),
+  phone: t.varchar({ length: 20 }),
   ...timestamps,
 });
 
