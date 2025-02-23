@@ -10,8 +10,10 @@ function MuiRootProvider({ children }: PropsWithChildren) {
     <AppRouterCacheProvider
       options={{ enableCssLayer: true, key: 'mui', prepend: true }}
     >
-      <CssBaseline />
-      <MuiThemeProvider getMuiTheme={getTheme}>{children}</MuiThemeProvider>
+      <MuiThemeProvider getMuiTheme={getTheme}>
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
     </AppRouterCacheProvider>
   );
 }

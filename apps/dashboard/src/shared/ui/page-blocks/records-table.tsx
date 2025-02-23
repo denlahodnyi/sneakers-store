@@ -154,7 +154,7 @@ export function TableActiveCell({ active }: { active: boolean }) {
 
 export function TableViewRecordLink({ href }: { href: string }) {
   return (
-    <IconButton component={Link} href={href}>
+    <IconButton color="secondary" component={Link} href={href}>
       <Visibility />
     </IconButton>
   );
@@ -162,7 +162,7 @@ export function TableViewRecordLink({ href }: { href: string }) {
 
 export function TableEditRecordLink({ href }: { href: string }) {
   return (
-    <IconButton component={Link} href={href}>
+    <IconButton color="secondary" component={Link} href={href}>
       <EditOutlined />
     </IconButton>
   );
@@ -176,6 +176,7 @@ export function TableDeleteRecordButton({
   const [pending, startTransition] = useTransition();
   return (
     <IconButton
+      color="secondary"
       disabled={pending}
       type="submit"
       onClick={() => {

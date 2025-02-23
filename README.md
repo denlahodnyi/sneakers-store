@@ -39,6 +39,6 @@ pnpm dev
 - [x] payment and orders
 - [x] favorites
 - [ ] rating and comments
-- [ ] simple analytics in dashboard
+- [x] simple analytics in dashboard
 - [ ] improve build process
 - [ ] deploy

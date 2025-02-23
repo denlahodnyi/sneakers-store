@@ -17,6 +17,7 @@ import { discountContract } from './src/discount.contract.js';
 import { favProductsContract } from './src/favourite-products.contract.js';
 import { cartContract } from './src/cart.contract.js';
 import { orderContract } from './src/order.contract.js';
+import { analyticsContract } from './src/analytics.contract.js';
 
 const c = initContract();
 
@@ -46,6 +47,7 @@ export const contract = c.router(
     favoriteProducts: favProductsContract,
     cart: cartContract,
     order: orderContract,
+    analytics: analyticsContract,
   },
   { strictStatusCodes: true }
 );
@@ -66,3 +68,4 @@ export * from './src/dto/catalog.dto.js';
 export * from './src/dto/discount.dto.js';
 export * from './src/dto/cart.dto.js';
 export * from './src/dto/order.dto.js';
+export * from './src/dto/analytics.dto.js';

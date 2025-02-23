@@ -1,0 +1,785 @@
+{
+	"info": {
+		"_postman_id": "7b8a81e0-6d80-4727-863f-630c39ef4ab7",
+		"name": "sneakers-store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20262551"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Get providers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/auth/providers",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"auth",
+								"providers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Orc\",\n    \"email\": \"orc@g.com\",\n    \"password\": \"12345qwe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/users",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"borgg.com\",\n    \"password\": \"12345qwe\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/users/signin",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Some Den 1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/users/:userId",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "cbcdfd6e-fa60-479d-b382-eba6a59bab53"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users/:userId",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "ee57a4ce-de6f-430b-94c9-396fd5ec852a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users?providerAccountId=103851353068973467727&provider=google",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "providerAccountId",
+									"value": "103851353068973467727"
+								},
+								{
+									"key": "provider",
+									"value": "google"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users?email=admin@g.com",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "admin@g.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sessions",
+			"item": [
+				{
+					"name": "Get session",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/sessions/5e7d888e-ec12-4be4-a7f1-c1ee83a6ccac",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"sessions",
+								"5e7d888e-ec12-4be4-a7f1-c1ee83a6ccac"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "Get product by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/products/:productId",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"products",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "021960a9-f7d3-4bbf-9907-e14a010fb238"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/products",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "active",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "perPage",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "priorIds",
+									"value": "35ab339e-63b8-48ab-a1bd-a6d76e2d35b6",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "colors",
+			"item": [
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/colors?active=true",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"colors"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "Create category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/categories",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/categories?active=true",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "catalog",
+			"item": [
+				{
+					"name": "Get catalog products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/catalog?perPage=1",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"catalog"
+							],
+							"query": [
+								{
+									"key": "categorySlug",
+									"value": "high-top-trainers",
+									"disabled": true
+								},
+								{
+									"key": "categorySlug",
+									"value": "sneakers",
+									"disabled": true
+								},
+								{
+									"key": "genders",
+									"value": "men",
+									"disabled": true
+								},
+								{
+									"key": "colorIds",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "sizeIds",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "sale",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "featured",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "inStock",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "price",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "perPage",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/catalog/filters",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"catalog",
+								"filters"
+							],
+							"query": [
+								{
+									"key": "categorySlug",
+									"value": "sneakers",
+									"disabled": true
+								},
+								{
+									"key": "genders",
+									"value": "men",
+									"disabled": true
+								},
+								{
+									"key": "colorIds",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sizeIds",
+									"value": "2",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get products details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/catalog/products/:idOrSlug",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"catalog",
+								"products",
+								":idOrSlug"
+							],
+							"variable": [
+								{
+									"key": "idOrSlug",
+									"value": "78a74554-9519-4250-907f-22e085d8da2a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by catalog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/catalog/search?q=adidas",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"catalog",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "adidas"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sku",
+			"item": [
+				{
+					"name": "Get sku details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/product-skus/:productSkuId",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"product-skus",
+								":productSkuId"
+							],
+							"variable": [
+								{
+									"key": "productSkuId",
+									"value": "42157b8d-e616-4215-b50b-d1bcba917552"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get skus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/product-skus?productId=04a3b361-ec69-4e15-a797-1612e5e8e095&page=0",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"product-skus"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "productId",
+									"value": "04a3b361-ec69-4e15-a797-1612e5e8e095"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "perPage",
+									"value": "-1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "variants",
+			"item": [
+				{
+					"name": "Get products variants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/product-vars?productId=04a3b361-ec69-4e15-a797-1612e5e8e095",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"product-vars"
+							],
+							"query": [
+								{
+									"key": "productId",
+									"value": "04a3b361-ec69-4e15-a797-1612e5e8e095"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "perPage",
+									"value": "-1",
+									"disabled": true
+								},
+								{
+									"key": "fields",
+									"value": "color",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "discounts",
+			"item": [
+				{
+					"name": "Get discoutns",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/discounts",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"discounts"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "productVarId",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "Create order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": null,\n    \"priceInCents\": 3000,\n    \"totalPriceInCents\": 3000,\n    \"totalDiscountInCents\": null,\n    \"customerName\": \"Test\",\n    \"email\": \"test@t.com\",\n    \"phone\": null,\n    \"address\": null,\n    \"payStatus\": \"pending\",\n    \"items\": [\n        {\n            \"productSkuId\": \"qwerty\",\n            \"priceInCents\": 2000,\n            \"finalPriceInCents\": 2000,\n            \"qty\": 2,\n            \"discount\": null\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/orders",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "analytics",
+			"item": [
+				{
+					"name": "Get summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/analytics",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Root",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URI}}",
+					"host": [
+						"{{URI}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URI",
+			"value": "localhost:3000",
+			"type": "string"
+		}
+	]
+}
