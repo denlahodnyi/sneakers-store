@@ -64,3 +64,7 @@ $ pnpm run test:e2e
 # test coverage
 $ pnpm run test:cov
 ```
+
+## Database structure
+
+![diagram](docs/sneakers-store-db.svg)
