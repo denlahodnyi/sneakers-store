@@ -25,6 +25,7 @@ import { FavouriteProductsModule } from './favourite-products/favourite-products
 import { SessionMiddleware } from './auth/session.middleware.js';
 import { CartsModule } from './carts/carts.module.js';
 import { OrdersModule } from './orders/orders.module.js';
+import { AnalyticsModule } from './analytics/analytics.module.js';
 
 const prodEnvs = ['.env.production.local', '.env.production', '.env'];
 const devEnvs = ['.env.development.local', '.env.development', '.env'];
@@ -64,6 +65,7 @@ const testEnvs = ['.env.test.local', '.env.test', '.env'];
     FavouriteProductsModule,
     CartsModule,
     OrdersModule,
+    AnalyticsModule,
   ],
   exports: [],
   controllers: [AppController],
